@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
   
   public Arm() {
 
-    armMotor = new SparkMax(OperatorConstants.0, MotorType.kBrushless); // 0 is a placeholder since we don't know the true ID
+    armMotor = new SparkMax(0, MotorType.kBrushless); // 0 is a placeholder since we don't know the true ID
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(idleMode.kBrake);
       //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);

@@ -55,4 +55,5 @@ public class Arm extends SubsystemBase {
   public void updateDashboard() {
     SmartDashboard.putNumber("Arm Rotation", getArmAngle());
     SmartDashboard.putNumber("Arm Speed", leaderMotor.get());
+  }
 }

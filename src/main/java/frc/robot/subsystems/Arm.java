@@ -26,7 +26,7 @@ public class Arm extends SubsystemBase {
 
     armMotor = new SparkMax(0, MotorType.kBrushless); // 0 is a placeholder since we don't know the true ID
     armConfig = new SparkMaxConfig();
-    armConfig.idleMode(idleMode.kBrake);
+    armConfig.idleMode(IdleMode.kBrake);
       //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);
       // Why do we have a conversion factor here when the idleMode command doesn't require any actual measurements?
 
@@ -54,6 +54,6 @@ public class Arm extends SubsystemBase {
 
   public void updateDashboard() {
     SmartDashboard.putNumber("Arm Rotation", getArmAngle());
-    SmartDashboard.putNumber("Arm Speed", leaderMotor.get());
+    SmartDashboard.putNumber("Arm Speed", armMotor.get());
   }
 }

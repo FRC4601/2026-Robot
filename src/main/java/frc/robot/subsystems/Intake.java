@@ -25,7 +25,6 @@ public class Intake extends SubsystemBase {
 
     intakeMotor = new SparkMax(0, MotorType.kBrushless); // 0 is just a placeholder
     intakeConfig = new SparkMaxConfig();
-    leaderConfig.idleMode(IdleMode.kBrake)
         //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);
         // ^ same issue as in the arm subsystem
 

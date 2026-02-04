@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 //import edu.wpi.first.math.controller.PIDController; (please don't do this the math is way too complex)
+import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
 
@@ -24,7 +25,7 @@ public class Arm extends SubsystemBase {
   
   public Arm() {
 
-    armMotor = new SparkMax(0, MotorType.kBrushless); // 0 is a placeholder since we don't know the true ID
+    armMotor = new SparkMax(ArmConstants.ARM_MOTOR_ID, MotorType.kBrushless);
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(IdleMode.kBrake);
       //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);

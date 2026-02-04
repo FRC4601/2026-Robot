@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 //import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
 
@@ -23,10 +24,9 @@ public class Intake extends SubsystemBase {
   
   public Intake() {
 
-    intakeMotor = new SparkMax(0, MotorType.kBrushless); // 0 is just a placeholder
+    intakeMotor = new SparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
     intakeConfig = new SparkMaxConfig();
-        //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);
-        // ^ same issue as in the arm subsystem
+
 
     intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     

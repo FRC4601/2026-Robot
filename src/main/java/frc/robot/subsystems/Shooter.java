@@ -6,7 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.*;
-// need to import arm constants and possibly PID
+import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
 
@@ -20,8 +20,8 @@ public class Shooter extends SubsystemBase {
   
   public Shooter() {
 
-    leaderMotor = new TalonFX(0); // 0 is a placeholder
-    followerMotor = new TalonFX(1);// 1 is a placeholder
+    leaderMotor = new TalonFX(ShooterConstants.SHOOTER_MOTOR_ID_1);
+    followerMotor = new TalonFX(ShooterConstants.SHOOTER_MOTOR_ID_2);
     
     leaderConfig = new TalonFXConfiguration();
     followerConfig = new TalonFXConfiguration();

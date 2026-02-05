@@ -8,7 +8,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.StagerConstants;
 
 public class Stager extends SubsystemBase {
 
@@ -17,7 +17,7 @@ public class Stager extends SubsystemBase {
   
   public Stager() {
 
-    stagerMotor = new SparkMax(0, MotorType.kBrushless); // 0 is a placeholder
+    stagerMotor = new SparkMax(StagerConstants.STAGER_MOTOR_ID, MotorType.kBrushless);
     stagerConfig = new SparkMaxConfig();
     stagerConfig.idleMode(IdleMode.kBrake);
       //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);

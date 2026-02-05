@@ -8,7 +8,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.AgitatorConstants;
 
 public class Agitator extends SubsystemBase {
 
@@ -17,7 +17,7 @@ public class Agitator extends SubsystemBase {
   
   public Agitator() {
 
-    agitatorMotor = new SparkMax(0, MotorType.kBrushless); // 0 is a placeholder
+    agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);
     agitatorConfig = new SparkMaxConfig();
     agitatorConfig.idleMode(IdleMode.kBrake);
       //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);

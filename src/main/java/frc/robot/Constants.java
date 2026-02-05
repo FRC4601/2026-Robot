@@ -15,9 +15,21 @@ public final class Constants {
   
   }
 
-    public static class IntakeConstants {
+  public static class IntakeConstants {
     public static final int INTAKE_MOTOR_ID = 19; //needs to be set when intake motor added
+  }
 
+  public static class AgitatorConstants {
+    public static final int AGITATOR_MOTOR_ID = 19; //needs to be set when agitator motor added
+  }
+
+  public static class StagerConstants {
+    public static final int STAGER_MOTOR_ID = 19; //needs to be set when stager motor added
+  }
+
+  public static class ShooterConstants {
+    public static final int SHOOTER_MOTOR_ID_1 = 19; //needs to be set when shooter motor 1 added
+    public static final int SHOOTER_MOTOR_ID_2 = 20; //needs to be set when shooter motor 2 added
   }
 
   public static class LEDConstants {

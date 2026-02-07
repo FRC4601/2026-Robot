@@ -4,14 +4,18 @@ public final class Constants {
 
   public static class ArmConstants {
     public static final int ARM_MOTOR_ID = 20; //needs to be set when arm motor is added
-    public static final double tolerance = 0.0; // Tolerance in degrees for arm position
-    public static final double kd = 0;
+    public static final double tolerance = 0.0; // Tolerance in rotations for arm position
+    public static final double kd = 0; 
     public static final double ki = 0;
-    public static final double kp = .0067;
+    public static final double kp = .0067; //PID Values for the arm position controller. 
     public static final double ks = 0;
     public static final double kg = .02;
     public static final double kv = 0;
     public static final double ka = 0;
+
+    public static final double ARM_EXTENDED_POSITION = 0; //in motor rotations. needs to be set through testing
+    public static final double ARM_GEAR_RATIO = 0; //may use if we need to convert from motor rotations to arm angle in degrees
+    
   
   }
 

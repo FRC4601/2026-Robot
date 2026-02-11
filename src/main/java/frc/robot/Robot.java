@@ -24,6 +24,13 @@ public class Robot extends TimedRobot {
         m_robotContainer = new RobotContainer();
     }
 
+    // making a new method here that may or may not work for the pneumatics
+    private final XboxController driveStick = new XboxController(port: 0);
+    private final Pneumatics m_pneumatics = new Pneumatics();
+    /*when a buttom is pressed, something will extend; when the button is released,
+    that same thing will retract. idk how helpful that is or not
+    see teleop periodic for more*/
+
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
@@ -62,7 +69,15 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        /* idk what this does either, i think if you press a the pneumatics extend, and
+        if you release a they go back in */
+        if (driveStick.getAButton()){
+            m_pneumatics.pneumatics.set(Value.kForward);
+        }else{
+            m_pneumatics.pneumatics.set(Value.kReverse);
+        }
+    }
 
     @Override
     public void teleopExit() {}

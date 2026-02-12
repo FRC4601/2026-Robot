@@ -5,16 +5,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-// ^ no idea what module type does but it was in the 2023 code
-// import edu.wpi.first.wpilibj.DoubleSolenoid.Value; (this might be needed)
+// ^ differentiates between whether we have a CTREPCM pneumatics type or a REVPH. I need to ask donald which we have.
 
 public class Hopper extends SubsystemBase {
 
   public final DoubleSolenoid piston;
 
   public Hopper() {
-    piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-    // ^ still need to research the double solenoid class
+    piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
   }
 
   @Override
@@ -23,7 +21,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void openHopper(){
-    piston.set(Value.kForward);
+    piston.set(DoubleSolenoid.Value.kForward);
     // ^ NO CLUE what this does rn. will figure out tomorrow (thursday)
   }
   

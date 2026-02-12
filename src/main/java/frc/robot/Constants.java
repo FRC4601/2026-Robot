@@ -36,7 +36,7 @@ public final class Constants {
     public static final int SHOOTER_MOTOR_ID_2 = 20; // needs to be set when shooter motor 2 added
   }
 
-  public static class pneumaticsConstants {
+  public static class PneumaticsConstants {
     public static final int HOPPER_FORWARD_ID = 67; // needs to be set when hopper piston added
     public static final int HOPPER_REVERSE_ID = 41; // needs to be set when hopper piston added
     public static final int NET_FORWARD_ID = 67; // needs to be set when net piston added

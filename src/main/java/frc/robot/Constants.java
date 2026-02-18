@@ -36,6 +36,14 @@ public final class Constants {
     public static final int SHOOTER_MOTOR_ID_2 = 20; // needs to be set when shooter motor 2 added
   }
 
+ public static class TurretConstants {
+    public static final int TURRET_MOTOR_ID = 19; // needs to be set when turret motor added
+    public static final double kd = 0;
+    public static final double ki = 0;
+    public static final double kp = 0.01; // PID Values for the turret position controller. These will need to be tuned.
+  }
+
+
   public static class PneumaticsConstants {
     public static final int HOPPER_FORWARD_ID = 67; // needs to be set when hopper piston added
     public static final int HOPPER_REVERSE_ID = 41; // needs to be set when hopper piston added

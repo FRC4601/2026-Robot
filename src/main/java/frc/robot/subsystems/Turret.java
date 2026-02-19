@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Turret extends SubsystemBase {
 
 
-private final SparkMax turretMotor;
+  private final SparkMax turretMotor;
   private final SparkMaxConfig turretConfig;
   private final RelativeEncoder encoder;
   private final PIDController turretPIDController;
@@ -69,7 +69,8 @@ private final SparkMax turretMotor;
 
      //Instead of setting the turret to an absolute angle, 
      //this method allows us to adjust the current target angle by a certain delta.
-     // This is useful for continuous tracking based on the limelight's tx offset, where we want to keep adjusting the turret angle as the target moves, rather than setting it to a fixed position.
+     // This is useful for continuous tracking based on the limelight's tx offset, where we want to keep adjusting the turret angle as the target moves, 
+     //rather than setting it to a fixed position.
     
    public void adjustAngle(double deltaDegrees) {
         setTurretAngle(getAngleDegrees() + deltaDegrees);

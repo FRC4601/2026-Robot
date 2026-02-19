@@ -17,6 +17,7 @@ public class Shooter extends SubsystemBase {
   private TalonFX followerMotor;
   private TalonFXConfiguration leaderConfig;
   private TalonFXConfiguration followerConfig;
+  private VelocityVoltage velocityRequest;
 
     // TalonFX velocity is in rotations/second — convert from RPM
     // rotations per second = RPM / 60
@@ -57,7 +58,7 @@ public class Shooter extends SubsystemBase {
     followerConfig = new TalonFXConfiguration();
 
     // Velocity PID — slot 0
-        leaderConfig.Slot0.kP = 0.1; // Placeholder values — these will need to be tuned for your robot
+        leaderConfig.Slot0.kP = 0.1; // Placeholder values — these will need to be tuned
         leaderConfig.Slot0.kI = 0;
         leaderConfig.Slot0.kD = 0;
         leaderConfig.Slot0.kV = 0.02; // Velocity feedforward term — also needs tuning
@@ -73,13 +74,58 @@ public class Shooter extends SubsystemBase {
 
 
     leaderMotor.getConfigurator().apply(leaderConfig);
+    followerMotor.getConfigurator().apply(followerConfig);
+
+    velocityRequest = new VelocityVoltage(0).withSlot(0);
 
 
     
   }
 
-  // Since I don't know how the shooter works, I can't do the methods rn... :/
+  public void setVelocity(double rpm) {
+        targetRPM = rpm;
+        double rps = rpm * RPM_TO_RPS;
+        leaderMotor.setControl(velocityRequest.withVelocity(rps));
+    }
 
+
+
+   public void setVelocityFromDistance(double distanceInches) {
+        double rpm = interpolateRPM(distanceInches);
+        setVelocity(rpm);
+    }
+
+  
+   private double interpolateRPM(double distanceInches) {
+        if (distanceInches <= DISTANCE_TO_RPM.firstKey()) {
+            return DISTANCE_TO_RPM.firstEntry().getValue();
+        }
+        if (distanceInches >= DISTANCE_TO_RPM.lastKey()) {
+            return DISTANCE_TO_RPM.lastEntry().getValue();
+        }
+
+        Double lowerKey = DISTANCE_TO_RPM.floorKey(distanceInches);
+        Double upperKey = DISTANCE_TO_RPM.ceilingKey(distanceInches);
+
+        double lowerRPM = DISTANCE_TO_RPM.get(lowerKey);
+        double upperRPM = DISTANCE_TO_RPM.get(upperKey);
+
+        // Linear interpolation between the two nearest entries
+        double t = (distanceInches - lowerKey) / (upperKey - lowerKey);
+        return lowerRPM + t * (upperRPM - lowerRPM);
+    }
+
+
+
+    public static double tyToDistance(double ty) {
+        final double CAMERA_HEIGHT_INCHES = 24.0;    // Height of limelight lens from floor
+        final double TARGET_HEIGHT_INCHES = 57.0;    // Height of April Tag center from floor
+        final double CAMERA_MOUNT_ANGLE_DEGREES = 30.0; // Upward tilt of limelight on robot
+
+        double angleToTarget = Math.toRadians(CAMERA_MOUNT_ANGLE_DEGREES + ty);
+        return (TARGET_HEIGHT_INCHES - CAMERA_HEIGHT_INCHES) / Math.tan(angleToTarget);
+    }
+    
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

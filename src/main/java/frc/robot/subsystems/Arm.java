@@ -42,6 +42,8 @@ public class Arm extends SubsystemBase {
     armPIDController.setTolerance(ArmConstants.tolerance);
 
 
+    // Jack, Zack, Dom: Using the pid controller code from this subsystem as an example, add a pid controller to 
+    // the the turrent subsystem (Zack: we will also use the Rev Throughbore con)
     
   }
 

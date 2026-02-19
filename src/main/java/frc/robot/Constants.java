@@ -46,4 +46,13 @@ public final class Constants {
   public static class LEDConstants {
     public static final int BLINKIN_PWM_PORT = 0;
   }
+
+  public static class TurretConstants {
+    public static final int TURRET_MOTOR_ID = 19; // needs to be set when turret motor added
+    public static final double kp = 0.1; // Placeholder values — these will need to be tuned for your robot
+    public static final double ki = 0;
+    public static final double kd = 0;
+
+  }
+
 }

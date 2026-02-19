@@ -49,7 +49,7 @@ public class Vision extends SubsystemBase {
     public boolean hasTarget() {
         return table.getEntry("tv").getDouble(0.0) == 1.0;
     }
-
+ 
 
      /**
      * Switch the active Limelight pipeline.

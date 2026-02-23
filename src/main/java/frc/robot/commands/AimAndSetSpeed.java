@@ -74,5 +74,11 @@ public void execute() {
         double distance = Shooter.tyToDistance(ty);
         shooter.setVelocityFromDistance(distance);
     }
+
+    public boolean isReadyToShoot() {
+        // We can shoot when the turret is aligned and the shooter is at speed
+        return turret.isAligned() && shooter.isAtSpeed() && vision.hasTarget();
+    }
+
 }
 

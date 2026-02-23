@@ -15,9 +15,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Stager;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Vision;
+import frc.robot.commands.AimAndSetSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.commands.RunStager;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -36,8 +41,24 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final CommandXboxController xboxController = new CommandXboxController(1);
+
+    public final Vision m_vision = new Vision();
+    public final Turret m_turret = new Turret();
+    public final Shooter m_shooter = new Shooter();
+    public final Stager m_stager = new Stager();
+
+    private final AimAndSetSpeed aimAndSetSpeed =
+        new AimAndSetSpeed(m_turret, m_shooter, m_vision);
+
+
+    
+
+
     public RobotContainer() {
         configureBindings();
+
+
     }
 
     private void configureBindings() {
@@ -75,6 +96,17 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // Aim and shoot while holding the right trigger. The stager will run when ready to shoot.
+
+        xboxController.rightTrigger(0.5).whileTrue(
+            aimAndSetSpeed.alongWith(
+            new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot)
+    )
+);
+
+
+        
     }
 
     public Command getAutonomousCommand() {

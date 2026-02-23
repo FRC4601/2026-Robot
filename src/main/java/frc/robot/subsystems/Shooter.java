@@ -124,8 +124,16 @@ public class Shooter extends SubsystemBase {
 
         double angleToTarget = Math.toRadians(CAMERA_MOUNT_ANGLE_DEGREES + ty);
         return (TARGET_HEIGHT_INCHES - CAMERA_HEIGHT_INCHES) / Math.tan(angleToTarget);
+
     }
-    
+
+
+
+    public boolean isAtSpeed() {
+        double currentRPM = leaderMotor.getVelocity().getValueAsDouble()*60;  // Convert back to RPM for comparison
+        return Math.abs(currentRPM - targetRPM) <= AT_SPEED_TOLERANCE_RPM;
+    }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

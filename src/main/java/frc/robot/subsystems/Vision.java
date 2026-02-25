@@ -16,10 +16,15 @@ public class Vision extends SubsystemBase {
   //table where all data came from the limelight is stored. We will be using the "tx", "ty", and "tv" entries to get the horizontal offset, vertical offset, and target validity respectively.
   private final NetworkTable table;
 
+  public static final int PIPELINE_APRILTAG = 0;
+  
+
   public Vision() {
     
     // Initialize the NetworkTable for vision processing
     table = NetworkTableInstance.getDefault().getTable("limelight");
+
+    setPipeline(PIPELINE_APRILTAG); // Start with the April Tag pipeline by default}
 
   }
 
@@ -60,6 +65,10 @@ public class Vision extends SubsystemBase {
         table.getEntry("pipeline").setNumber(pipelineIndex);
     }
 
+    // Method to get the current active pipeline index from the limelight. This is useful for debugging to confirm we're on the right pipeline.
+    public int getCurrentPipeline() {
+        return (int) table.getEntry("getpipe").getDouble(0.0);
+    }
 
 
   @Override
@@ -70,6 +79,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Limelight TX", getTx());
     SmartDashboard.putNumber("Limelight TY", getTy());
     SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
+    SmartDashboard.putNumber("Limelight Pipeline", getCurrentPipeline());
   }
 
   @Override

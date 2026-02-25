@@ -10,6 +10,7 @@ import frc.robot.Constants.ShooterConstants;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Shooter extends SubsystemBase {
 
@@ -133,6 +134,10 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
+    SmartDashboard.putNumber("Shooter/Target RPM", targetRPM);
+    SmartDashboard.putNumber("Shooter/Current RPM", leaderMotor.getVelocity().getValueAsDouble()*60);
+    SmartDashboard.putBoolean("Shooter/At Speed", isAtSpeed());
   }
 
   @Override

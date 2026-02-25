@@ -58,7 +58,7 @@ public class Turret extends SubsystemBase {
     double targetPositionRotations = targetAngleDegrees * MOTOR_ROTATIONS_PER_DEGREE;
     double currentPositionRotations = encoder.getPosition();
     double output = turretPIDController.calculate(currentPositionRotations, targetPositionRotations);
-    output = MathUtil.clamp(output, -0.5, 0.5) ; // Clamp the output to prevent excessive speed. Adjust these limits as necessary.
+    output = MathUtil.clamp(output, -0.3, 0.3) ; // Clamp the output to prevent excessive speed. Adjust these limits as necessary.
     turretMotor.set(output);
   }
 

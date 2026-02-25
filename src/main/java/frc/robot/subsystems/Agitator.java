@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -10,41 +10,46 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.AgitatorConstants;
 
+/**
+ * Agitator subsystem — stirs balls in the hopper and feeds them toward the stager.
+ * Runs whenever the robot is aligned and ready to shoot, producing a continuous
+ * ball stream: Agitator → Stager → Shooter.
+ */
 public class Agitator extends SubsystemBase {
 
-  private final SparkMax agitatorMotor;
-  private final SparkMaxConfig agitatorConfig;
-  
-  public Agitator() {
+    private final SparkMax agitatorMotor;
+    private final SparkMaxConfig agitatorConfig;
 
-    agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);
-    agitatorConfig = new SparkMaxConfig();
-    agitatorConfig.idleMode(IdleMode.kBrake);
-      //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);
-      // Why do we have a conversion factor here when the idleMode command doesn't require any actual measurements?
-
-    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // Internal flag so isRunning() doesn't rely on floating-point motor.get() != 0
     
-  }
+    public Agitator() {
+        agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);
+        agitatorConfig = new SparkMaxConfig();
 
-  @Override
-  public void periodic() {
-    updateDashboard();
-  }
+        // Coast mode so the agitator doesn't jam balls against a stopped stager on disable
+        agitatorConfig.idleMode(IdleMode.kCoast);
 
-  public void setAgitatorSpeed(double speed) {
-    agitatorMotor.set(speed);
-  }
+        agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
 
-  public void stopAgitator() {
-    agitatorMotor.set(0);
-  }
+    /**
+     * Run the agitator at the specified speed (positive = toward stager).
+     * Typical value: AgitatorConstants.AGITATOR_SPEED (e.g. 0.5)
+     */
+    public void setAgitatorSpeed(double speed) {
+        agitatorMotor.set(speed);
+    }
 
-  public boolean isAgitatorOn() {
-    return agitatorMotor.get() != 0;
-  }
+    /** Stop the agitator immediately. */
+    public void stopAgitator() {
+        agitatorMotor.set(0);
+    }
 
-  public void updateDashboard() {
-    SmartDashboard.putBoolean("Is Agitator On?", isAgitatorOn());
-  }
+
+
+    @Override
+    public void periodic() {
+        
+        SmartDashboard.putNumber("Agitator/Speed", agitatorMotor.get());
+    }
 }

@@ -20,8 +20,7 @@ public class Stager extends SubsystemBase {
     stagerMotor = new SparkMax(StagerConstants.STAGER_MOTOR_ID, MotorType.kBrushless);
     stagerConfig = new SparkMaxConfig();
     stagerConfig.idleMode(IdleMode.kBrake);
-      //.encoder.positionConversionFactor(2.2*OperatorConstants.inchesPerMotorRotation);
-      // Why do we have a conversion factor here when the idleMode command doesn't require any actual measurements?
+
 
     stagerMotor.configure(stagerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
@@ -40,11 +39,8 @@ public class Stager extends SubsystemBase {
     stagerMotor.set(0);
   }
 
-  public boolean isStagerOn() {
-    return stagerMotor.get() != 0;
-  }
 
   public void updateDashboard() {
-    SmartDashboard.putBoolean("Is Stager On?", isStagerOn());
+      SmartDashboard.putNumber("Stager Speed", stagerMotor.get());
   }
 }

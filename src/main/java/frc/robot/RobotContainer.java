@@ -21,8 +21,10 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
 import frc.robot.commands.AimAndSetSpeed;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.commands.RunStager;
+import frc.robot.commands.RunAgitator;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -47,9 +49,10 @@ public class RobotContainer {
     public final Turret m_turret = new Turret();
     public final Shooter m_shooter = new Shooter();
     public final Stager m_stager = new Stager();
+    public final Agitator m_agitator = new Agitator();
 
-    private final AimAndSetSpeed aimAndSetSpeed =
-        new AimAndSetSpeed(m_turret, m_shooter, m_vision);
+
+    private final AimAndSetSpeed aimAndSetSpeed = new AimAndSetSpeed(m_turret, m_shooter, m_vision);
 
 
     
@@ -97,13 +100,12 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // Aim and shoot while holding the right trigger. The stager will run when ready to shoot.
+        //Controller 2 Commands
+        // Aim and shoot while holding the right trigger. The stager will run when ready to shoot (wheels are at speed, target is found, turret is aimed)
 
         xboxController.rightTrigger(0.5).whileTrue(
-            aimAndSetSpeed.alongWith(
-            new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot)
-    )
-);
+            aimAndSetSpeed.alongWith(new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot), new RunAgitator(m_agitator, aimAndSetSpeed::isReadyToShoot)
+            ));
 
 
         

@@ -66,19 +66,15 @@ public class Shooter extends SubsystemBase {
     
 
 
-    followerMotor.setControl(new Follower(ShooterConstants.SHOOTER_MOTOR_ID_1, MotorAlignmentValue.Opposed));
- 
-
     leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
 
-    leaderMotor.getConfigurator().apply(leaderConfig);
-    followerMotor.getConfigurator().apply(followerConfig);
+
 
     velocityRequest = new VelocityVoltage(0).withSlot(0);
 
-
+    followerMotor.setControl(new Follower(ShooterConstants.SHOOTER_MOTOR_ID_1, MotorAlignmentValue.Opposed));
     
   }
 

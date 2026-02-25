@@ -49,32 +49,13 @@ public class Turret extends SubsystemBase {
     turretPIDController.setTolerance(1.0); // Set an appropriate tolerance for the turret's position
   }
 
-  //Method to auto align the turret to a specific angle in degrees. This will be used in the auto-alignment command that uses the limelight's tx offset to compute the target angle.
-
-  public void setTurretAngle(double degrees) {
-    targetAngleDegrees = degrees;
-    //the encoder reads in motor rotations, but we want to control the turret in degrees, 
-    //so we need to convert the target angle from degrees to motor rotations using the gear ratio.
-    double targetPositionRotations = targetAngleDegrees * MOTOR_ROTATIONS_PER_DEGREE;
-    double currentPositionRotations = encoder.getPosition();
-    double output = turretPIDController.calculate(currentPositionRotations, targetPositionRotations);
-    output = MathUtil.clamp(output, -0.3, 0.3) ; // Clamp the output to prevent excessive speed. Adjust these limits as necessary.
+  //Method to auto align the turret to be facing the april tag target. This will be used in the AimAndSetSpeed command.
+  public void trackTarget(double tx) {
+    double output = turretPIDController.calculate(tx, 0.0);
+    output = MathUtil.clamp(output, -0.5, 0.5);
     turretMotor.set(output);
-  }
+}
 
-   /**
-     * Adjust turret angle by a delta (e.g. from limelight tx offset).
-     * Useful for continuous tracking without computing absolute angle.
-     */
-
-     //Instead of setting the turret to an absolute angle, 
-     //this method allows us to adjust the current target angle by a certain delta.
-     // This is useful for continuous tracking based on the limelight's tx offset, where we want to keep adjusting the turret angle as the target moves, 
-     //rather than setting it to a fixed position.
-    
-   public void adjustAngle(double deltaDegrees) {
-        setTurretAngle(getAngleDegrees() + deltaDegrees);
-    }
 
 
     // Method to get the current turret angle in degrees by converting the encoder's motor rotations using the gear ratio.
@@ -83,8 +64,8 @@ public class Turret extends SubsystemBase {
     return currentPositionRotations / MOTOR_ROTATIONS_PER_DEGREE;
   }
 
-    public boolean isAligned() {
-        return Math.abs(targetAngleDegrees - getAngleDegrees()) < ALIGNMENT_TOLERANCE_DEGREES;
+    public boolean isAligned(double tx) {
+        return Math.abs(tx) < ALIGNMENT_TOLERANCE_DEGREES;
     }
 
 
@@ -106,7 +87,7 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Turret/AngleDegrees", getAngleDegrees());
         SmartDashboard.putNumber("Turret/TargetDegrees", targetAngleDegrees);
-        SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
+;
     }
 
   @Override

@@ -20,7 +20,7 @@ public class Agitator extends SubsystemBase {
     private final SparkMax agitatorMotor;
     private final SparkMaxConfig agitatorConfig;
 
-    // Internal flag so isRunning() doesn't rely on floating-point motor.get() != 0
+
     
     public Agitator() {
         agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);

@@ -27,14 +27,6 @@ public class AimAndSetSpeed extends Command {
     private final Shooter shooter;
     private final Vision vision;
 
-    // Proportional gain for turret alignment from tx
-    // Output = kP_turret * tx (in degrees)
-    // Tune this: too high = oscillation, too low = sluggish tracking
-    private static final double kP_TURRET = 0.05;
-
-    // Deadband: ignore tx error smaller than this (degrees)
-    // Prevents micro-corrections from chattering the turret when it's close enough
-    private static final double TX_DEADBAND = 0.5;
 
 
     public AimAndSetSpeed(Turret turret, Shooter shooter, Vision vision) {
@@ -58,26 +50,31 @@ public void execute() {
             return;
         }
 
+                // --- Turret alignment ---
+        // tx is the horizontal error. We drive the turret proportionally to close that error.
+        // Positive tx = target is to the right = turret needs to rotate right = positive delta
+
         double tx = vision.getTx();
         double ty = vision.getTy();
 
-        // --- Turret alignment ---
-        // tx is the horizontal error. We drive the turret proportionally to close that error.
-        // Positive tx = target is to the right = turret needs to rotate right = positive delta
-        if (Math.abs(tx) > TX_DEADBAND) {
-            double turretDelta = kP_TURRET * tx;
-            turret.adjustAngle(turretDelta);
+        if (vision.hasTarget()) {
+            turret.trackTarget(tx);
+        } else {
+            turret.stop();
         }
 
         // --- Shooter speed ---
         // Convert ty to distance, then look up the correct RPM
+
         double distance = Shooter.tyToDistance(ty);
         shooter.setVelocityFromDistance(distance);
+
+
     }
 
     public boolean isReadyToShoot() {
-        // We can shoot when the turret is aligned and the shooter is at speed
-        return turret.isAligned() && shooter.isAtSpeed() && vision.hasTarget();
+        
+        return turret.isAligned(vision.getTx()) && shooter.isAtSpeed() && vision.hasTarget();
     }
 
 }

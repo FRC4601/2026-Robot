@@ -19,12 +19,20 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stager;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AimAndSetSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.commands.RunStager;
 import frc.robot.commands.RunAgitator;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Hopper;
+import frc.robot.commands.Shoot;
+import frc.robot.subsystems.Intake;
+import frc.robot.commands.PositionArm;
+import frc.robot.commands.RetractArm;
+
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -50,6 +58,9 @@ public class RobotContainer {
     public final Shooter m_shooter = new Shooter();
     public final Stager m_stager = new Stager();
     public final Agitator m_agitator = new Agitator();
+    public final Arm m_arm = new Arm();
+    public final Hopper m_hopper = new Hopper();
+    public final Intake m_intake = new Intake();
 
 
     private final AimAndSetSpeed aimAndSetSpeed = new AimAndSetSpeed(m_turret, m_shooter, m_vision);
@@ -103,9 +114,39 @@ public class RobotContainer {
         //Controller 2 Commands
         // Aim and shoot while holding the right trigger. The stager will run when ready to shoot (wheels are at speed, target is found, turret is aimed)
 
-        xboxController.rightTrigger(0.5).whileTrue(
-            aimAndSetSpeed.alongWith(new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot), new RunAgitator(m_agitator, aimAndSetSpeed::isReadyToShoot)
-            ));
+        //xboxController.rightTrigger(0.5).whileTrue(
+           // aimAndSetSpeed.alongWith(new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot), new RunAgitator(m_agitator, aimAndSetSpeed::isReadyToShoot,.25)
+           // ));
+
+       
+
+        //Manual controls for testing the arm, intake, agitator, and shooter
+        //Use these to make sure all motors are responding and spinning in the correct direction
+
+        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter, m_stager));
+        xboxController.a().whileTrue(new RunAgitator(m_agitator,() -> true, .25));
+        xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(.2), m_intake));
+        xboxController.y().onTrue(Commands.run(() -> m_hopper.openHopper(), m_hopper));
+
+        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(xboxController.getLeftY()), m_arm));
+        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate((xboxController.getRightX())), m_turret));
+
+
+        // controls for testing PID on the arm 
+        //Make sure to set the kp in arm constants to a small value (like 0.01) before testing to avoid violent movements
+        //Also make sure that ARM_EXTENDED_POSITION is set correctly in constants. You will need to look at the encoder 
+        //readings when moving the arm manually to determine this value. 
+
+        xboxController.povDown().onTrue(new PositionArm(m_arm, m_hopper, ArmConstants.ARM_EXTENDED_POSITION));
+
+
+
+
+
+
+
+
+        
 
 
         

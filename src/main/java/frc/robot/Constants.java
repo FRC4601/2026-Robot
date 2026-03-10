@@ -13,9 +13,10 @@ public final class Constants {
     public static final double kv = 0;
     public static final double ka = 0;
 
-    public static final double ARM_EXTENDED_POSITION = 0; // in motor rotations. needs to be set through testing
+    public static final double ARM_EXTENDED_POSITION = 0;
+    public static final double ARM_RETRACTED_POSITION = 0; // in motor rotations. needs to be set through testing
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
-    
+    public static final int ARM_ABSOLUTE_ENCODER_PORT = 0; // needs to be set when absolute encoder is added
   
   }
 
@@ -41,6 +42,8 @@ public final class Constants {
     public static final double kd = 0;
     public static final double ki = 0;
     public static final double kp = 0.01; // PID Values for the turret position controller. These will need to be tuned.
+    public static final double MAX_ANGLE_DEGREES = 90.0; // Maximum allowed turret angle in degrees (adjust as needed)
+    public static final double MIN_ANGLE_DEGREES = -90.0; // Minimum allowed turret angle in degrees (adjust as needed)
   }
 
 
@@ -54,6 +57,8 @@ public final class Constants {
   public static class LEDConstants {
     public static final int BLINKIN_PWM_PORT = 0;
   }
+
+
 
 
 

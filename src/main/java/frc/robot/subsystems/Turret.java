@@ -20,6 +20,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
+
+
 public class Turret extends SubsystemBase {
 
 
@@ -29,7 +31,7 @@ public class Turret extends SubsystemBase {
   private final PIDController turretPIDController;
 
 
-  private static final double GEAR_RATIO = 100.0;
+  private static final double GEAR_RATIO = 81;
   private static final double MOTOR_ROTATIONS_PER_DEGREE = GEAR_RATIO / 360.0;
   private static final double ALIGNMENT_TOLERANCE_DEGREES = 2.0; // Adjust this tolerance as needed
   private double targetAngleDegrees; // Stores the current target angle for alignment checks
@@ -53,6 +55,12 @@ public class Turret extends SubsystemBase {
   public void trackTarget(double tx) {
     double output = turretPIDController.calculate(tx, 0.0);
     output = MathUtil.clamp(output, -0.5, 0.5);
+
+    if (output > 0 && getAngleDegrees() >= TurretConstants.MAX_ANGLE_DEGREES) {
+      output = 0; // Prevent moving beyond the maximum angle
+    } else if (output < 0 && getAngleDegrees() <= TurretConstants.MIN_ANGLE_DEGREES) {
+      output = 0; // Prevent moving beyond the minimum angle
+    }
     turretMotor.set(output);
 }
 
@@ -73,7 +81,19 @@ public class Turret extends SubsystemBase {
      * Stop the turret motor immediately.
      */
     public void stop() {
-        turretMotor.stopMotor();
+        turretMotor.set(0);
+    }
+
+    public void rotate(double speed) {
+      if (speed > 0 && getAngleDegrees() >= TurretConstants.MAX_ANGLE_DEGREES) {
+        turretMotor.set(0);
+        return;
+      }
+      else if (speed < 0 && getAngleDegrees() <= TurretConstants.MIN_ANGLE_DEGREES) {
+        turretMotor.set(0);
+        return;
+      }
+      turretMotor.set(speed);
     }
 
     /**

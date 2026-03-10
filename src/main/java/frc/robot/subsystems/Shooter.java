@@ -131,6 +131,14 @@ public class Shooter extends SubsystemBase {
         return Math.abs(currentRPM - targetRPM) <= AT_SPEED_TOLERANCE_RPM;
     }
 
+    public void stopShooter(){
+      leaderMotor.set(0);
+    }
+
+    public void Shoot(double speed){
+      leaderMotor.set(speed);
+    }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

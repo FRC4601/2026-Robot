@@ -13,14 +13,17 @@ import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DutyCycleEncoder; 
+
 
 public class Arm extends SubsystemBase {
 
   private final SparkMax armMotor;
   private final SparkMaxConfig armConfig;
-  private final RelativeEncoder encoder;
-  private final DigitalInput limitSwitch; // Assuming a limit switch is used for homing
   private final PIDController armPIDController;
+  private final DutyCycleEncoder absoluteEncoder; // For absolute position feedback if needed
+
+   /** Creates a new Arm. */
   
 
   
@@ -31,10 +34,8 @@ public class Arm extends SubsystemBase {
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(IdleMode.kBrake);
     armMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    encoder = armMotor.getEncoder();
-    encoder.setPosition(0); // Reset encoder position to 0 at startup (assuming the arm starts at the home position when powered on)
-    limitSwitch = new DigitalInput(0);
+    absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT); // Assuming the absolute encoder is connected to a DIO port
+    
 
 
     // Initialize the PID controller with the constants from ArmConstants
@@ -54,21 +55,19 @@ public class Arm extends SubsystemBase {
       // Check if the limit switch is triggered to reset the encoder position
       //this prevents the encoder reading from drifting 
       
-    if (limitSwitch.get()) {
-      encoder.setPosition(0);
-    }
 
 
   }
 
 
 
-  public double getArmPosition() {
-    return encoder.getPosition();
+  public double ArmPosition() {
+    return absoluteEncoder.get()*360; // Assuming the absolute encoder is configured to return distance in motor rotations
   }
 
   public void setArmSpeed(double speed) {
-    if (limitSwitch.get() && speed < 0) {
+    if ((ArmPosition() > ArmConstants.ARM_EXTENDED_POSITION && speed < 0) 
+         || (ArmPosition() < ArmConstants.ARM_RETRACTED_POSITION && speed > 0)) {
       // If the limit switch is triggered and we're trying to move the arm down, stop the motor
       armMotor.set(0);
     } else {
@@ -82,9 +81,17 @@ public class Arm extends SubsystemBase {
   }
 
   public void moveArmToPosition(double targetPosition) {
-    double currentPosition = getArmPosition();
+    double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
-    output = MathUtil.clamp(output, -0.5, 0.5); // Clamp the output to prevent excessive speed (adjust limits as needed)    
+    output = MathUtil.clamp(output, -0.5, 0.5);
+    
+    if (output > 0 && currentPosition > ArmConstants.ARM_EXTENDED_POSITION) {
+      
+      output = 0; // Prevent moving beyond the extended position
+    } else if (output < 0 && currentPosition < ArmConstants.ARM_RETRACTED_POSITION) {
+      output = 0; // Prevent moving beyond the retracted position                                   
+    }
+       
     setArmSpeed(output);
   }
 
@@ -92,9 +99,11 @@ public class Arm extends SubsystemBase {
 
   public void updateDashboard() {
     // When arm is added, we can move the arm manually and see how many motor rotations will fully extend the arm
-    SmartDashboard.putNumber("Arm Rotations", encoder.getPosition());  
+    SmartDashboard.putNumber("Arm Angle", ArmPosition());  
     SmartDashboard.putNumber("Arm Speed", armMotor.get());
-    SmartDashboard.putBoolean("Limit Switch Triggered", limitSwitch.get());
     SmartDashboard.putBoolean("Arm At Setpoint", armPIDController.atSetpoint());
+    SmartDashboard.putNumber("Arm Target Position", armPIDController.getSetpoint());
   }
+
+
 }

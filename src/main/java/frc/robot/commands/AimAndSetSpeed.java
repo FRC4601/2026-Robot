@@ -39,7 +39,7 @@ public class AimAndSetSpeed extends Command {
 @Override
 public void initialize() {
         // Ensure we're on the right Limelight pipeline for April Tags
-        vision.setPipeline(0); // TODO: Set to your April Tag pipeline index
+        vision.setPipeline(Vision.PIPELINE_APRILTAG); // TODO: Set to your April Tag pipeline index
     }
 
 @Override
@@ -77,5 +77,10 @@ public void execute() {
         return turret.isAligned(vision.getTx()) && shooter.isAtSpeed() && vision.hasTarget();
     }
 
+        @Override
+        public void end(boolean interrupted) {
+            turret.stop();
+            shooter.stopShooter();
+        }
 }
 

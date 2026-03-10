@@ -29,5 +29,16 @@ public void execute() {
         stager.setStagerSpeed(0.0); // Stop stager if not ready to shoot
     }
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        stager.stopStager();
+    }
+
+    // Command runs until the button is released (whileTrue handles this)
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
 

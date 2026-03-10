@@ -36,5 +36,13 @@ public class Hopper extends SubsystemBase {
     // no clue if we will need to stop it when it's fully out/fully in or if it's done automatically
     // will test eventually
   }
+
+  public boolean isOpen() {
+    return piston.get() == DoubleSolenoid.Value.kForward;
+  }
+
+  public boolean isClosed() {
+    return piston.get() == DoubleSolenoid.Value.kReverse;
+  }
   
 }

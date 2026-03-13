@@ -4,19 +4,20 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 
 public class Vision extends SubsystemBase {
 
   //table where all data came from the limelight is stored. We will be using the "tx", "ty", and "tv" entries to get the horizontal offset, vertical offset, and target validity respectively.
   private final NetworkTable table;
+  private int[] activeGoalTags; // Array to hold the active April Tag IDs for the current alliance
 
   public static final int PIPELINE_APRILTAG = 0;
+
   
 
   public Vision() {
@@ -24,7 +25,8 @@ public class Vision extends SubsystemBase {
     // Initialize the NetworkTable for vision processing
     table = NetworkTableInstance.getDefault().getTable("limelight");
 
-    setPipeline(PIPELINE_APRILTAG); // Start with the April Tag pipeline by default}
+    setPipeline(PIPELINE_APRILTAG); 
+    
 
   }
 
@@ -37,6 +39,17 @@ public class Vision extends SubsystemBase {
    public double getTx() {
         return table.getEntry("tx").getDouble(0.0);
     }
+
+    
+    public void setActiveGoalTags(){
+      if (Constants.isBlueAlliance){
+        activeGoalTags = new int[]{1, 2, 3}; // Example tag IDs for blue alliance goals
+      } else {
+        activeGoalTags = new int[]{4, 5, 6}; // Example tag IDs for red alliance goals
+      }
+    }
+
+
 
 
 
@@ -54,6 +67,14 @@ public class Vision extends SubsystemBase {
     public boolean hasTarget() {
         return table.getEntry("tv").getDouble(0.0) == 1.0;
     }
+
+    public boolean isOnGoalTag() {
+    int tid = (int) table.getEntry("tid").getDouble(-1);
+    for (int id : activeGoalTags) {
+        if (id == tid) return true;
+    }
+    return false;
+}
  
 
      /**
@@ -80,6 +101,8 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Limelight TY", getTy());
     SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
     SmartDashboard.putNumber("Limelight Pipeline", getCurrentPipeline());
+    SmartDashboard.putBoolean("On Goal Tag", isOnGoalTag());
+    SmartDashboard.putNumber("tid", table.getEntry("tid").getDouble(-1));;
   }
 
   @Override

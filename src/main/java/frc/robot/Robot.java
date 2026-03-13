@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -41,11 +42,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            Constants.isBlueAlliance = alliance.get() == DriverStation.Alliance.Blue;
+            
+        }
+
+        m_robotContainer.getVision().setActiveGoalTags();
+
+
+        
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
+
+
+
     }
 
     @Override
@@ -56,10 +71,22 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+                Constants.isBlueAlliance = alliance.get() == DriverStation.Alliance.Blue;
+               
+            }
+
+        m_robotContainer.getVision().setActiveGoalTags();
+
         if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
-        }
+                CommandScheduler.getInstance().cancel(m_autonomousCommand);
+             }
+
+
     }
+    
 
     @Override
     public void teleopPeriodic() {}

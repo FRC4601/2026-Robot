@@ -6,10 +6,14 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -64,6 +68,7 @@ public class RobotContainer {
 
 
     private final AimAndSetSpeed aimAndSetSpeed = new AimAndSetSpeed(m_turret, m_shooter, m_vision);
+    
 
 
     
@@ -141,15 +146,11 @@ public class RobotContainer {
 
 
 
-
-
-
-
-
         
+    }
 
-
-        
+        public Vision getVision() {
+            return m_vision;
     }
 
     public Command getAutonomousCommand() {
@@ -170,5 +171,8 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle)
         );
     }
+
+
+
 }
 // test comment :)

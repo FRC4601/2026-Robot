@@ -57,7 +57,7 @@ public class Turret extends SubsystemBase {
     output = MathUtil.clamp(output, -0.5, 0.5);
 
     if (output > 0 && getAngleDegrees() >= TurretConstants.MAX_ANGLE_DEGREES) {
-      output = 0; // Prevent moving beyond the maximum angle
+      output = 0; // Prevent moving beyond the maximum anglels
     } else if (output < 0 && getAngleDegrees() <= TurretConstants.MIN_ANGLE_DEGREES) {
       output = 0; // Prevent moving beyond the minimum angle
     }

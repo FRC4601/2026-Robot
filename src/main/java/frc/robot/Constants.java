@@ -2,6 +2,8 @@ package frc.robot;
 
 public final class Constants {
 
+  public static boolean isBlueAlliance = true;
+
   public static class ArmConstants {
     public static final int ARM_MOTOR_ID = 20; // needs to be set when arm motor is added
     public static final double tolerance = 0.0; // Tolerance in rotations for arm position

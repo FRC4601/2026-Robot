@@ -128,7 +128,7 @@ public class RobotContainer {
         //Manual controls for testing the arm, intake, agitator, and shooter
         //Use these to make sure all motors are responding and spinning in the correct direction
 
-        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter, m_stager));
+        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, .2));
         xboxController.a().whileTrue(new RunAgitator(m_agitator,() -> true, .25));
         xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(.2), m_intake));
         xboxController.y().onTrue(Commands.run(() -> m_hopper.openHopper(), m_hopper));
@@ -175,4 +175,3 @@ public class RobotContainer {
 
 
 }
-// test comment :)

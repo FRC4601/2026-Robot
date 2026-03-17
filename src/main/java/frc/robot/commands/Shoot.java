@@ -3,6 +3,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stager;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import edu.wpi.first.math.geometry.Pose2d;
 
 
 /**
@@ -26,14 +28,20 @@ public class Shoot extends Command {
     private final Agitator agitator;
     private final Shooter shooter;
     private final Stager stager;    
+    private final double speed;
+    private final CommandSwerveDrivetrain drivetrain;
+
+    
 
 
 
 
-    public Shoot(Agitator agitator, Shooter shooter, Stager stager) {
+    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain, double speed) {
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
+        this.speed = speed;
+        this.drivetrain = drivetrain;
         addRequirements(agitator, shooter, stager); // Declare subsystem dependencies
     
 }
@@ -44,9 +52,14 @@ public void initialize() {
 
 @Override
 public void execute() {
-        shooter.Shoot(.2);
-        stager.setStagerSpeed(0.3);
-        agitator.setAgitatorSpeed(.1);
+
+        Pose2d pose = drivetrain.getState().Pose;
+        double x = pose.getX();
+        double y = pose.getY();
+
+        shooter.Shoot(speed);
+        stager.setStagerSpeed(speed);
+        agitator.setAgitatorSpeed(speed);
 
     }
 

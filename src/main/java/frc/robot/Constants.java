@@ -60,6 +60,10 @@ public final class Constants {
     public static final int BLINKIN_PWM_PORT = 0;
   }
 
+  public static class CANRangeConstants {
+    public static final int CAN_RANGE_ID = 67; // needs to be set when CANrange is added
+  }
+
 
 
 

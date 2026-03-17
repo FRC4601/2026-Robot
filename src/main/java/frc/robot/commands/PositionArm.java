@@ -37,8 +37,9 @@ public void execute() {
     
 }
 
+@Override
 public void end(boolean interrupted) {
-    hopper.closeHopper(); // Close the hopper after moving the arm to the target position   
+     
 }
 }
 

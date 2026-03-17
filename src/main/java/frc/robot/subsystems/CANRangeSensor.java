@@ -18,16 +18,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * add what this file does here
  */
-public class CANRange extends SubsystemBase {
+public class CANRangeSensor extends SubsystemBase {
 
     //Initialize the CAN range
   private final CANBus kCANBus = new CANBus("rio");
   private final CANrange CANrange = new CANrange(CANRangeConstants.CAN_RANGE_ID,kCANBus); // 67 67 67 67 67 67 ... 67
-  private CANrangeConfiguration CANrangeConfig = new CANrangeConfiguration();
+  private CANrangeConfiguration CANrangeConfig = new CANrangeConfiguration(); // 41 41 41 41 41 41 ... 41
 
 
     
-  public CANRange() {
+  public CANRangeSensor() {
 
     CANrangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2500; // If CANrange has a signal strength of at least 2500, it is a valid measurement.
     CANrangeConfig.ProximityParams.ProximityThreshold = 0.05; // If CANrange detects an object within 0.05 meters, it will trigger the "isDetected" signal.
@@ -45,7 +45,7 @@ public class CANRange extends SubsystemBase {
      DetectFuel();
      SmartDashboard.putBoolean("CANrange Status", DetectFuel());
      SmartDashboard.putNumber("CANrange Distance",getSensorDistance());
-     SmartDashboard.putNumber("CANrange Signal Strength",getSignalStrength());
+     SmartDashboard.putNumber("CANrange Signal Strength",getSignalStrengthDouble());
 
 
   }
@@ -54,14 +54,14 @@ public class CANRange extends SubsystemBase {
 
 
   public boolean DetectFuel(){
-    return CANrange.getDistance().getValueAsDouble() < .05 && getSignalStrength() > 2500;
+    return getSensorDistance() < .05 && getSignalStrengthDouble() > 2500;
   }
 
   public double getSensorDistance(){
     return CANrange.getDistance().getValueAsDouble();
   }
 
-  public double getSignalStrength(){
+  public double getSignalStrengthDouble(){
     return CANrange.getSignalStrength().getValueAsDouble();
   }
 

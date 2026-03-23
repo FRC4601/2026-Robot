@@ -5,6 +5,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stager;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.subsystems.Arm;
 
 
 /**
@@ -30,23 +31,30 @@ public class Shoot extends Command {
     private final Stager stager;    
     private final double speed;
     private final CommandSwerveDrivetrain drivetrain;
+    private final Arm arm;
+
 
     
 
 
 
 
-    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain, double speed) {
+    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,Arm arm,double speed) {
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
         this.speed = speed;
         this.drivetrain = drivetrain;
+        this.arm = arm;
         addRequirements(agitator, shooter, stager); // Declare subsystem dependencies
     
 }
 @Override
 public void initialize() {
+
+    agitator.startTimer();
+    arm.startOscillate();
+
 
     }
 
@@ -55,11 +63,17 @@ public void execute() {
 
         Pose2d pose = drivetrain.getState().Pose;
         double x = pose.getX();
-        double y = pose.getY();
+        double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
+        double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret
 
-        shooter.Shoot(speed);
-        stager.setStagerSpeed(speed);
-        agitator.setAgitatorSpeed(speed);
+        shooter.runShooter(speed);
+        stager.setStagerSpeed(-speed);
+        agitator.setAgitatorSpeed(-speed);
+        //agitator.feedPeriodic(); method to run agitator and unjam if necessary
+        arm.oscillate(); // Move the arm back and forth while shooting to help with feeding
+
+
+        /* Need to add a method in arm subsystem to move the arm back and forth while shooting to help with feeding */
 
     }
 

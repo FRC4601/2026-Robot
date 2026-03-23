@@ -70,12 +70,15 @@ public class Shooter extends SubsystemBase {
     leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+    leaderMotor.getConfigurator().apply(leaderConfig);
+    followerMotor.getConfigurator().apply(followerConfig);
 
 
 
     velocityRequest = new VelocityVoltage(0).withSlot(0);
 
     followerMotor.setControl(new Follower(ShooterConstants.SHOOTER_MOTOR_ID_1, MotorAlignmentValue.Opposed));
+    
     
   }
 
@@ -133,9 +136,10 @@ public class Shooter extends SubsystemBase {
 
     public void stopShooter(){
       leaderMotor.set(0);
+      targetRPM = 0.0;
     }
 
-    public void Shoot(double speed){
+    public void runShooter(double speed){
       leaderMotor.set(speed);
     }
 

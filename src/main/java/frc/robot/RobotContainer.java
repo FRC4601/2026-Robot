@@ -11,6 +11,7 @@ import java.util.Optional;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -63,7 +64,6 @@ public class RobotContainer {
     public final Stager m_stager = new Stager();
     public final Agitator m_agitator = new Agitator();
     public final Arm m_arm = new Arm();
-    public final Hopper m_hopper = new Hopper();
     public final Intake m_intake = new Intake();
 
 
@@ -128,13 +128,25 @@ public class RobotContainer {
         //Manual controls for testing the arm, intake, agitator, and shooter
         //Use these to make sure all motors are responding and spinning in the correct direction
 
-        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, .2));
-        xboxController.a().whileTrue(new RunAgitator(m_agitator,() -> true, .25));
-        xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(.2), m_intake));
-        xboxController.y().onTrue(Commands.run(() -> m_hopper.openHopper(), m_hopper));
 
-        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(xboxController.getLeftY()), m_arm));
-        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate((xboxController.getRightX())), m_turret));
+
+        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, 1));
+        xboxController.y().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, .9));
+        xboxController.a().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, .8));
+    
+
+        xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(-1), m_intake).finallyDo(() -> m_intake.runIntake(0)));
+
+        xboxController.rightBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(6000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
+        xboxController.leftBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(3000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
+
+        xboxController.povRight().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(45), m_turret).finallyDo(() -> m_turret.stop()));
+        xboxController.povLeft().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(-45), m_turret).finallyDo(() -> m_turret.stop()));
+
+
+        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(MathUtil.applyDeadband(xboxController.getLeftY(), 0.1) * 0.1), m_arm));
+        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate(MathUtil.applyDeadband(xboxController.getRightX(), 0.1) * 0.1), m_turret));
+
 
 
         // controls for testing PID on the arm 
@@ -142,7 +154,7 @@ public class RobotContainer {
         //Also make sure that ARM_EXTENDED_POSITION is set correctly in constants. You will need to look at the encoder 
         //readings when moving the arm manually to determine this value. 
 
-        xboxController.povDown().onTrue(new PositionArm(m_arm, m_hopper, ArmConstants.ARM_EXTENDED_POSITION));
+        //xboxController.povDown().onTrue(new PositionArm(m_arm, m_hopper, ArmConstants.ARM_EXTENDED_POSITION));
 
 
 

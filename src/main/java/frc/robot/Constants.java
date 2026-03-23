@@ -5,7 +5,7 @@ public final class Constants {
   public static boolean isBlueAlliance = true;
 
   public static class ArmConstants {
-    public static final int ARM_MOTOR_ID = 20; // needs to be set when arm motor is added
+    public static final int ARM_MOTOR_ID = 25; // needs to be set when arm motor is added
     public static final double tolerance = 0.0; // Tolerance in rotations for arm position
     public static final double kd = 0; 
     public static final double ki = 0;
@@ -19,19 +19,23 @@ public final class Constants {
     public static final double ARM_RETRACTED_POSITION = 0; // in motor rotations. needs to be set through testing
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
     public static final int ARM_ABSOLUTE_ENCODER_PORT = 0; // needs to be set when absolute encoder is added
+
+    public static final double POSITION_A_DEGREES = 10; // needs to be set through testing  
+    public static final double POSITION_B_DEGREES = 70;
   
   }
 
   public static class IntakeConstants {
-    public static final int INTAKE_MOTOR_ID = 19; // needs to be set when intake motor added
+    public static final int INTAKE_MOTOR_ID = 23; // needs to be set when intake motor added
   }
 
   public static class AgitatorConstants {
-    public static final int AGITATOR_MOTOR_ID = 19; // needs to be set when agitator motor added
+    public static final int AGITATOR_MOTOR_ID = 22;
+    public static final double FEED_SPEED = 1; // needs to be set when agitator motor added
   }
 
   public static class StagerConstants {
-    public static final int STAGER_MOTOR_ID = 19; // needs to be set when stager motor added
+    public static final int STAGER_MOTOR_ID = 24; // needs to be set when stager motor added
   }
 
   public static class ShooterConstants {
@@ -40,7 +44,7 @@ public final class Constants {
   }
 
  public static class TurretConstants {
-    public static final int TURRET_MOTOR_ID = 19; // needs to be set when turret motor added
+    public static final int TURRET_MOTOR_ID = 21; // needs to be set when turret motor added
     public static final double kd = 0;
     public static final double ki = 0;
     public static final double kp = 0.01; // PID Values for the turret position controller. These will need to be tuned.
@@ -50,10 +54,9 @@ public final class Constants {
 
 
   public static class PneumaticsConstants {
-    public static final int HOPPER_FORWARD_ID = 67; // needs to be set when hopper piston added
-    public static final int HOPPER_REVERSE_ID = 41; // needs to be set when hopper piston added
-    public static final int NET_FORWARD_ID = 67; // needs to be set when net piston added
-    public static final int NET_REVERSE_ID = 41; // needs to be set when net piston added
+    public static final int HOPPER_FORWARD_ID = 10 ; // needs to be set when hopper piston added
+    public static final int HOPPER_REVERSE_ID = 11; // needs to be set when hopper piston added
+
   }
 
   public static class LEDConstants {
@@ -61,7 +64,7 @@ public final class Constants {
   }
 
   public static class CANRangeConstants {
-    public static final int CAN_RANGE_ID = 67; // needs to be set when CANrange is added
+    public static final int CAN_RANGE_ID = 26; // needs to be set when CANrange is added
   }
 
 

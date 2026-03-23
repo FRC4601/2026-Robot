@@ -44,31 +44,31 @@ public void initialize() {
 
 @Override
 public void execute() {
+
         if (!vision.hasTarget()) {
             // No target visible — hold current turret position, keep shooter spinning
             // at last known speed so we're ready when target reappears
             return;
         }
 
-                // --- Turret alignment ---
+        else{
+            // Target is visible — read tx and ty for aiming and speed control
+            double tx = vision.getTx();
+            double ty = vision.getTy();
+
+        // --- Turret alignment ---
         // tx is the horizontal error. We drive the turret proportionally to close that error.
         // Positive tx = target is to the right = turret needs to rotate right = positive delta
 
-        double tx = vision.getTx();
-        double ty = vision.getTy();
-
-        if (vision.hasTarget()) {
             turret.trackTarget(tx);
-        } else {
-            turret.stop();
-        }
 
-        // --- Shooter speed ---
+                    // --- Shooter speed ---
         // Convert ty to distance, then look up the correct RPM
 
-        double distance = Shooter.tyToDistance(ty);
-        shooter.setVelocityFromDistance(distance);
+            double distance = Shooter.tyToDistance(ty);
+            shooter.setVelocityFromDistance(distance);
 
+        }
 
     }
 

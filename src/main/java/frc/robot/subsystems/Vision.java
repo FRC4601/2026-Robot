@@ -67,14 +67,14 @@ public class Vision extends SubsystemBase {
     public boolean hasTarget() {
         return table.getEntry("tv").getDouble(0.0) == 1.0;
     }
-
+     
     public boolean isOnGoalTag() {
     int tid = (int) table.getEntry("tid").getDouble(-1);
     for (int id : activeGoalTags) {
         if (id == tid) return true;
     }
     return false;
-}
+}   
  
 
      /**
@@ -101,7 +101,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Limelight TY", getTy());
     SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
     SmartDashboard.putNumber("Limelight Pipeline", getCurrentPipeline());
-    SmartDashboard.putBoolean("On Goal Tag", isOnGoalTag());
+    //SmartDashboard.putBoolean("On Goal Tag", isOnGoalTag());
     SmartDashboard.putNumber("tid", table.getEntry("tid").getDouble(-1));;
   }
 

@@ -13,7 +13,8 @@ import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DutyCycleEncoder; 
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer; 
 
 
 public class Arm extends SubsystemBase {
@@ -21,7 +22,12 @@ public class Arm extends SubsystemBase {
   private final SparkMax armMotor;
   private final SparkMaxConfig armConfig;
   private final PIDController armPIDController;
-  private final DutyCycleEncoder absoluteEncoder; // For absolute position feedback if needed
+  private final DutyCycleEncoder absoluteEncoder; //REV throughbore encoder.
+  private enum ArmState { POSITION_A, POSITION_B }
+  private ArmState currentArmState = ArmState.POSITION_A;
+  private Timer armTimer = new Timer();
+
+ 
 
    /** Creates a new Arm. */
   
@@ -34,13 +40,14 @@ public class Arm extends SubsystemBase {
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(IdleMode.kBrake);
     armMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT); // Assuming the absolute encoder is connected to a DIO port
+    absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT); // Need encoder port here
     
 
 
     // Initialize the PID controller with the constants from ArmConstants
     armPIDController = new PIDController(ArmConstants.kp, ArmConstants.ki, ArmConstants.kd);
     armPIDController.setTolerance(ArmConstants.tolerance);
+
 
 
   
@@ -59,13 +66,22 @@ public class Arm extends SubsystemBase {
 
   }
 
+  public boolean isAtSetpoint() {
+    //Check if the arm is within the tolerance of the target position
+    return armPIDController.atSetpoint();
+  } 
+
 
 
   public double ArmPosition() {
-    return absoluteEncoder.get()*360; // Assuming the absolute encoder is configured to return distance in motor rotations
+    return absoluteEncoder.get()*360; //Get the arm angle in degrees. The absolute encoder returns a value between 0 and 1.
   }
 
   public void setArmSpeed(double speed) {
+
+    //Need to debug this to make sure that the arm movement is correctly limited. 
+
+    /* 
     if ((ArmPosition() > ArmConstants.ARM_EXTENDED_POSITION && speed < 0) 
          || (ArmPosition() < ArmConstants.ARM_RETRACTED_POSITION && speed > 0)) {
       // If the limit switch is triggered and we're trying to move the arm down, stop the motor
@@ -73,6 +89,11 @@ public class Arm extends SubsystemBase {
     } else {
       armMotor.set(speed);
     }
+      */
+
+      //for now just running the motor with no limits
+
+      armMotor.set(speed);
 
   }
 
@@ -80,10 +101,12 @@ public class Arm extends SubsystemBase {
     armMotor.set(0);
   }
 
+  //method to set arm to target position with PID control. 
+
   public void moveArmToPosition(double targetPosition) {
     double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
-    output = MathUtil.clamp(output, -0.5, 0.5);
+    output = MathUtil.clamp(output, -0.5, 0.5); //limit to half power at most to prevent violent movements. Adjust as necessary.
     
     if (output > 0 && currentPosition > ArmConstants.ARM_EXTENDED_POSITION) {
       
@@ -95,6 +118,38 @@ public class Arm extends SubsystemBase {
     setArmSpeed(output);
   }
 
+
+
+
+  public void startOscillate() {
+    armTimer.reset();
+    armTimer.start();
+    currentArmState = ArmState.POSITION_A; // start from a known position
+}
+
+
+  public void oscillate() {
+    switch (currentArmState) {
+
+        case POSITION_A:
+            moveArmToPosition(ArmConstants.POSITION_A_DEGREES);
+
+            if (armTimer.hasElapsed(0.5)) { // time spent at each position
+                currentArmState = ArmState.POSITION_B;
+                armTimer.reset();
+            }
+            break;
+
+        case POSITION_B:
+            moveArmToPosition(ArmConstants.POSITION_B_DEGREES);
+
+            if (armTimer.hasElapsed(0.5)) {
+                currentArmState = ArmState.POSITION_A;
+                armTimer.reset();
+            }
+            break;
+    }
+}
   
 
   public void updateDashboard() {

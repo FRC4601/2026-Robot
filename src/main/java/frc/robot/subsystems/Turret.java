@@ -65,6 +65,13 @@ public class Turret extends SubsystemBase {
 }
 
 
+public void setTargetAngleDegrees(double targetAngleDegrees) {
+  double output = turretPIDController.calculate(getAngleDegrees(), targetAngleDegrees);
+  output = MathUtil.clamp(output, -0.5, 0.5);   
+  rotate(output);
+
+
+}
 
     // Method to get the current turret angle in degrees by converting the encoder's motor rotations using the gear ratio.
     public double getAngleDegrees() {

@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
             
         }
 
-        m_robotContainer.getVision().setActiveGoalTags();
+        //m_robotContainer.getVision().setActiveGoalTags();
 
 
         
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
                
             }
 
-        m_robotContainer.getVision().setActiveGoalTags();
+        //m_robotContainer.getVision().setActiveGoalTags();
 
         if (m_autonomousCommand != null) {
                 CommandScheduler.getInstance().cancel(m_autonomousCommand);

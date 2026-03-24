@@ -51,7 +51,7 @@ public class Agitator extends SubsystemBase {
 
        
     agitatorConfig.idleMode(IdleMode.kCoast);
-    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); // meters, adjust based on testing 
+    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); // 
 
     canrangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2500; // If CANrange has a signal strength of at least 2500, it is a valid measurement.
     canrangeConfig.ProximityParams.ProximityThreshold = BALL_DETECTION_THRESHOLD; // If CANrange detects an object within 0.05 meters, it will trigger the "isDetected" signal.

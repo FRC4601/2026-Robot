@@ -6,6 +6,7 @@ import frc.robot.subsystems.Stager;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.Arm;
+import edu.wpi.first.wpilibj.Timer; 
 
 
 /**
@@ -32,6 +33,7 @@ public class Shoot extends Command {
     private final double speed;
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
+    private final Timer timer;
 
 
     
@@ -46,6 +48,7 @@ public class Shoot extends Command {
         this.speed = speed;
         this.drivetrain = drivetrain;
         this.arm = arm;
+        timer = new Timer();
         addRequirements(agitator, shooter, stager); // Declare subsystem dependencies
     
 }
@@ -54,6 +57,11 @@ public void initialize() {
 
     agitator.startTimer();
     arm.startOscillate();
+
+    timer.reset();
+    timer.start();
+    
+    
 
 
     }
@@ -70,7 +78,11 @@ public void execute() {
         stager.setStagerSpeed(-speed);
         agitator.setAgitatorSpeed(-speed);
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
-        arm.oscillate(); // Move the arm back and forth while shooting to help with feeding
+
+        //if timer.hasElapsed(2){
+            //arm.oscillate();
+        //}
+         // Move the arm back and forth while shooting to help with feeding
 
 
         /* Need to add a method in arm subsystem to move the arm back and forth while shooting to help with feeding */
@@ -81,6 +93,7 @@ public void execute() {
         shooter.stopShooter();
         stager.stopStager();
         agitator.stopAgitator();
+        
     }
 
 

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Stager;
@@ -36,7 +37,8 @@ import frc.robot.subsystems.Hopper;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.PositionArm;
-import frc.robot.commands.RetractArm;
+import frc.robot.commands.Eject; 
+
 
 
 public class RobotContainer {
@@ -136,34 +138,28 @@ public class RobotContainer {
     
 
         xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(-1), m_intake).finallyDo(() -> m_intake.runIntake(0)));
+         xboxController.leftTrigger(0.5).whileTrue(Commands.run(() -> m_agitator.setAgitatorSpeed(.75), m_intake).finallyDo(() -> m_agitator.setAgitatorSpeed(0)));
+         xboxController.rightTrigger(.5).whileTrue(new Eject(m_agitator, m_intake,.75)); 
 
         xboxController.rightBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(6000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
         xboxController.leftBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(3000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
 
         xboxController.povRight().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(45), m_turret).finallyDo(() -> m_turret.stop()));
         xboxController.povLeft().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(-45), m_turret).finallyDo(() -> m_turret.stop()));
-
-
-        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(MathUtil.applyDeadband(xboxController.getLeftY(), 0.1) * 0.1), m_arm));
-        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate(MathUtil.applyDeadband(xboxController.getRightX(), 0.1) * 0.1), m_turret));
-
-
-
-        // controls for testing PID on the arm 
-        //Make sure to set the kp in arm constants to a small value (like 0.01) before testing to avoid violent movements
-        //Also make sure that ARM_EXTENDED_POSITION is set correctly in constants. You will need to look at the encoder 
-        //readings when moving the arm manually to determine this value. 
-
-        //xboxController.povDown().onTrue(new PositionArm(m_arm, m_hopper, ArmConstants.ARM_EXTENDED_POSITION));
-
+        xboxController.povDown().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(0), m_turret).finallyDo(() -> m_turret.stop()));
 
 
         
+
+        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> m_arm.setArmSpeed(xboxController.getLeftY() * 0.2), m_arm));
+        new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> m_turret.rotate(xboxController.getRightX() * 0.5), m_turret));
+
+
+        
+
     }
 
-        public Vision getVision() {
-            return m_vision;
-    }
+
 
     public Command getAutonomousCommand() {
         // Simple drive forward auton

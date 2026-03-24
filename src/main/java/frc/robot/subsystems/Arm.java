@@ -106,7 +106,7 @@ public class Arm extends SubsystemBase {
   public void moveArmToPosition(double targetPosition) {
     double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
-    output = MathUtil.clamp(output, -0.5, 0.5); //limit to half power at most to prevent violent movements. Adjust as necessary.
+    output = MathUtil.clamp(output, -0.2, 0.2); //limit to half power at most to prevent violent movements. Adjust as necessary.
     
     if (output > 0 && currentPosition > ArmConstants.ARM_EXTENDED_POSITION) {
       

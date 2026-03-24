@@ -30,14 +30,23 @@ public void initialize() {
 
 @Override
 public void execute() {
-    
+
     arm.moveArmToPosition(targetPosition);
     
 }
 
 @Override
 public void end(boolean interrupted) {
-     arm.isAtSetpoint(); // Stop the arm once it reaches the target position
-}
+     
+
+
 }
 
+@Override
+public boolean isFinished() {
+    // Check if the arm has reached the target position within a certain tolerance
+    return false;
+}
+
+
+}

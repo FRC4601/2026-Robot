@@ -67,7 +67,10 @@ public class Turret extends SubsystemBase {
 
 public void setTargetAngleDegrees(double targetAngleDegrees) {
   double output = turretPIDController.calculate(getAngleDegrees(), targetAngleDegrees);
-  output = MathUtil.clamp(output, -0.5, 0.5);   
+
+
+  output = MathUtil.clamp(output, -0.7, 0.7);   
+  
   rotate(output);
 
 

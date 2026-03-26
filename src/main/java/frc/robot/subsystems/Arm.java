@@ -58,19 +58,12 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     //write the current arm position and speed to the dashboard for testing purposes. 
     updateDashboard();
-
-      // Check if the limit switch is triggered to reset the encoder position
-      //this prevents the encoder reading from drifting 
-      
-
-
   }
 
   public boolean isAtSetpoint() {
     //Check if the arm is within the tolerance of the target position
     return armPIDController.atSetpoint();
   } 
-
 
 
   public double ArmPosition() {
@@ -82,9 +75,8 @@ public class Arm extends SubsystemBase {
     //Need to debug this to make sure that the arm movement is correctly limited. 
 
     /* 
-    if ((ArmPosition() > ArmConstants.ARM_EXTENDED_POSITION && speed < 0) 
-         || (ArmPosition() < ArmConstants.ARM_RETRACTED_POSITION && speed > 0)) {
-      // If the limit switch is triggered and we're trying to move the arm down, stop the motor
+    if ((ArmPosition() >= ArmConstants.ARM_EXTENDED_POSITION && speed > 0) 
+         || (ArmPosition() <= ArmConstants.ARM_RETRACTED_POSITION && speed < 0)) {
       armMotor.set(0);
     } else {
       armMotor.set(speed);
@@ -108,7 +100,7 @@ public class Arm extends SubsystemBase {
     double output = armPIDController.calculate(currentPosition, targetPosition);
     output = MathUtil.clamp(output, -0.2, 0.2); //limit to half power at most to prevent violent movements. Adjust as necessary.
     
-    if (output > 0 && currentPosition > ArmConstants.ARM_EXTENDED_POSITION) {
+    if (output > 0 && currentPosition >= ArmConstants.ARM_EXTENDED_POSITION) {
       
       output = 0; // Prevent moving beyond the extended position
     } else if (output < 0 && currentPosition < ArmConstants.ARM_RETRACTED_POSITION) {

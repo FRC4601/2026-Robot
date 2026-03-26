@@ -30,10 +30,11 @@ public class Shoot extends Command {
     private final Agitator agitator;
     private final Shooter shooter;
     private final Stager stager;    
-    private final double speed;
+    private final double rpm;
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
     private final Timer timer;
+    private final double feedspeed; // Speed for stager and agitator when feeding balls into the shooter, can be tuned
 
 
     
@@ -41,11 +42,12 @@ public class Shoot extends Command {
 
 
 
-    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,Arm arm,double speed) {
+    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,Arm arm,double rpm,double feedspeed) {
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
-        this.speed = speed;
+        this.rpm = rpm;
+        this.feedspeed = feedspeed;
         this.drivetrain = drivetrain;
         this.arm = arm;
         timer = new Timer();
@@ -74,9 +76,11 @@ public void execute() {
         double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret
 
-        shooter.runShooter(speed);
-        stager.setStagerSpeed(-speed);
-        agitator.setAgitatorSpeed(-speed);
+        shooter.setVelocity(rpm);
+        
+        stager.setStagerSpeed(-feedspeed);
+        agitator.setAgitatorSpeed(-feedspeed);
+        
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
         //if timer.hasElapsed(2){

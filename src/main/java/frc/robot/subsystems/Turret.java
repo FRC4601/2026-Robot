@@ -69,7 +69,7 @@ public void setTargetAngleDegrees(double targetAngleDegrees) {
   double output = turretPIDController.calculate(getAngleDegrees(), targetAngleDegrees);
 
 
-  output = MathUtil.clamp(output, -0.7, 0.7);   
+  output = MathUtil.clamp(output, -0.4, 0.4);   
   
   rotate(output);
 

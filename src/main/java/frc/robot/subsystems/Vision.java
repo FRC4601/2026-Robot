@@ -14,7 +14,7 @@ public class Vision extends SubsystemBase {
 
   //table where all data came from the limelight is stored. We will be using the "tx", "ty", and "tv" entries to get the horizontal offset, vertical offset, and target validity respectively.
   private final NetworkTable table;
-  private int[] activeGoalTags; // Array to hold the active April Tag IDs for the current alliance
+  //private int[] activeGoalTags; // Array to hold the active April Tag IDs for the current alliance
 
   public static final int PIPELINE_APRILTAG = 0;
 
@@ -26,6 +26,7 @@ public class Vision extends SubsystemBase {
     table = NetworkTableInstance.getDefault().getTable("limelight");
 
     setPipeline(PIPELINE_APRILTAG); 
+    
     
 
   }
@@ -40,7 +41,7 @@ public class Vision extends SubsystemBase {
         return table.getEntry("tx").getDouble(0.0);
     }
 
-    
+    /* 
     public void setActiveGoalTags(){
       if (Constants.isBlueAlliance){
         activeGoalTags = new int[]{1, 2, 3}; // Example tag IDs for blue alliance goals
@@ -48,7 +49,7 @@ public class Vision extends SubsystemBase {
         activeGoalTags = new int[]{4, 5, 6}; // Example tag IDs for red alliance goals
       }
     }
-
+    */
 
 
 
@@ -67,14 +68,16 @@ public class Vision extends SubsystemBase {
     public boolean hasTarget() {
         return table.getEntry("tv").getDouble(0.0) == 1.0;
     }
-     
+    
+    /* 
     public boolean isOnGoalTag() {
     int tid = (int) table.getEntry("tid").getDouble(-1);
     for (int id : activeGoalTags) {
         if (id == tid) return true;
     }
     return false;
-}   
+   }   
+      */
  
 
      /**

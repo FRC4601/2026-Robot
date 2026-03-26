@@ -5,9 +5,6 @@ import frc.robot.subsystems.Hopper;
 import frc.robot.Constants.ArmConstants;
 
 
-
-
-
 public class PositionArm extends Command {
 
     private final Arm arm;
@@ -24,7 +21,7 @@ public class PositionArm extends Command {
 @Override
 public void initialize() {
 
-    hopper.openHopper(); // Open the hopper to allow the arm to extend
+    hopper.openHopper(); // Opens the hopper to allow the arm to extend
 
     }
 

@@ -31,7 +31,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake(double speed) {
-    intakeMotor.set(speed);
+    intakeMotor.set(-speed);
     // might have to make this negative depending on how the motors are placed
   }
 

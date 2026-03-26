@@ -33,10 +33,10 @@ public class Shoot extends Command {
     private final Shooter shooter;
     private final Stager stager;    
     private final double rpm;
-    // should rpm be a double? i think just in case but idrk. not that deep.
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
     private final Timer timer;
+    private final double feedspeed; // Speed for stager and agitator when feeding balls into the shooter, can be tuned
 
 
     
@@ -44,11 +44,12 @@ public class Shoot extends Command {
 
 
 
-    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,Arm arm,double rpm) {
+    public Shoot(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,Arm arm,double rpm,double feedspeed) {
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
         this.rpm = rpm;
+        this.feedspeed = feedspeed;
         this.drivetrain = drivetrain;
         this.arm = arm;
         timer = new Timer();
@@ -77,11 +78,11 @@ public void execute() {
         double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret
 
-        // if we give it an rpm it can't reach, what will happen?
-        // it'll probably just max out at the closest possible rpm, but we should maybe test just in case
         shooter.setVelocity(rpm);
-        stager.setStagerSpeed(-StagerConstants.STAGER_SPEED);
-        agitator.setAgitatorSpeed(-AgitatorConstants.AGITATOR_SPEED);
+        
+        stager.setStagerSpeed(-feedspeed);
+        agitator.setAgitatorSpeed(-feedspeed);
+        
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
         //if timer.hasElapsed(2){

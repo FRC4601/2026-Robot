@@ -20,8 +20,8 @@ public final class Constants {
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
     public static final int ARM_ABSOLUTE_ENCODER_PORT = 0; // needs to be set when absolute encoder is added
 
-    public static final double POSITION_A_DEGREES = 10; // needs to be set through testing  
-    public static final double POSITION_B_DEGREES = 70;
+    public static final double POSITION_A_DEGREES = 70; // needs to be set through testing  
+    public static final double POSITION_B_DEGREES = 40;
   
   }
 

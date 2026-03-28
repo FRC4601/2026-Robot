@@ -28,13 +28,13 @@ public class Eject extends Command {
     @Override
     public void execute() {
             m_agitator.setAgitatorSpeed(m_wheelspeed); // Set to desired agitator speed (tune as needed);
-            m_intake.runIntake(m_wheelspeed);
+            m_intake.runIntake(-m_wheelspeed);
     }
 
     @Override
     public void end(boolean interrupted) {
         m_agitator.stopAgitator();
-        m_intake.runIntake(0);  
+        m_intake.stopIntake();  
     }
 
     // Command runs until the button is released (whileTrue handles this)

@@ -15,8 +15,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -38,6 +41,11 @@ import frc.robot.commands.Shoot;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.PositionArm;
 import frc.robot.commands.Eject; 
+import frc.robot.commands.IntakeCommand;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 
 
@@ -67,20 +75,39 @@ public class RobotContainer {
     public final Agitator m_agitator = new Agitator();
     public final Arm m_arm = new Arm();
     public final Intake m_intake = new Intake();
+    public final Hopper m_hopper = new Hopper();
 
 
     private final AimAndSetSpeed aimAndSetSpeed = new AimAndSetSpeed(m_turret, m_shooter, m_vision);
+    SendableChooser<Command> m_autoChooser = new SendableChooser<>();
     
 
-
-    
-
-
+    // this is where the commands for auto will go!
     public RobotContainer() {
+
+        drivetrain.configureAutoBuilder(); 
+
+        NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
+            new PositionArm(m_arm, m_hopper, ArmConstants.ARM_EXTENDED_POSITION),
+            new IntakeCommand(m_intake)
+        ));
+
+        NamedCommands.registerCommand(("AmongUs"), 
+            new AimAndSetSpeed(m_turret, m_shooter, m_vision)
+        );
+          
+
+
+
+    
+
+        m_autoChooser = AutoBuilder.buildAutoChooser("Get Off Line Auto");
+
+        SmartDashboard.putData("Auto Chooser", m_autoChooser);
+
         configureBindings();
-
-
     }
+
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -132,27 +159,30 @@ public class RobotContainer {
 
 
 
-        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, 1));
-        xboxController.y().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, .9));
-        xboxController.a().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm, .8));
+        xboxController.y().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,5500 ,1));
+        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,5000 ,.9));
+        xboxController.a().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,4500 ,.8));
     
+        //while shooting: power of 1 ~= 5500 rpm, .9  ~= 5000 rpm, .8  ~= 4500 rpm. 
 
-        xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(-1), m_intake).finallyDo(() -> m_intake.runIntake(0)));
+        xboxController.x().whileTrue(Commands.run(() -> m_intake.runIntake(1), m_intake).finallyDo(() -> m_intake.stopIntake()));
          xboxController.leftTrigger(0.5).whileTrue(Commands.run(() -> m_agitator.setAgitatorSpeed(.75), m_intake).finallyDo(() -> m_agitator.setAgitatorSpeed(0)));
          xboxController.rightTrigger(.5).whileTrue(new Eject(m_agitator, m_intake,.75)); 
 
-        xboxController.rightBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(6000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
-        xboxController.leftBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(3000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
+        xboxController.rightBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(5500), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
+        xboxController.leftBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(6000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
 
-        xboxController.povRight().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(45), m_turret).finallyDo(() -> m_turret.stop()));
-        xboxController.povLeft().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(-45), m_turret).finallyDo(() -> m_turret.stop()));
+        xboxController.povRight().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(90), m_turret).finallyDo(() -> m_turret.stop()));
+        xboxController.povLeft().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(-90), m_turret).finallyDo(() -> m_turret.stop()));
         xboxController.povDown().onTrue(Commands.run(() -> m_turret.setTargetAngleDegrees(0), m_turret).finallyDo(() -> m_turret.stop()));
 
 
         
 
         new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> m_arm.setArmSpeed(xboxController.getLeftY() * 0.2), m_arm));
-        new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> m_turret.rotate(xboxController.getRightX() * 0.5), m_turret));
+        new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> m_turret.rotate(xboxController.getRightX() * 0.2), m_turret));
+        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(0), m_arm));
+        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate(0), m_turret));
 
 
         
@@ -162,22 +192,10 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        );
+        
+         return m_autoChooser.getSelected();
+
+        
     }
 
 

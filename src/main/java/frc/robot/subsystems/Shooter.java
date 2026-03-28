@@ -25,7 +25,7 @@ public class Shooter extends SubsystemBase {
    private static final double RPM_TO_RPS = 1.0 / 60.0;
 
     // Tolerance in RPM to consider shooter "at speed" and ready to fire
-    private static final double AT_SPEED_TOLERANCE_RPM = 75.0;
+    private static final double AT_SPEED_TOLERANCE_RPM = 150.0;
 
      // --- Distance to RPM lookup table ---
     // Key: distance in inches from target
@@ -59,10 +59,10 @@ public class Shooter extends SubsystemBase {
     followerConfig = new TalonFXConfiguration();
 
     // Velocity PID — slot 0
-        leaderConfig.Slot0.kP = 0.1; // Placeholder values — these will need to be tuned
+        leaderConfig.Slot0.kP = 0.2; // Placeholder values — these will need to be tuned
         leaderConfig.Slot0.kI = 0;
         leaderConfig.Slot0.kD = 0;
-        leaderConfig.Slot0.kV = 0.02; // Velocity feedforward term — also needs tuning
+        leaderConfig.Slot0.kV = 0.12; // Velocity feedforward term — also needs tuning
 
     
 

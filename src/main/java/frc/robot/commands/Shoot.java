@@ -37,6 +37,7 @@ public class Shoot extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
     private final Timer timer;
+    private final double feedspeed; // Speed for stager and agitator when feeding balls into the shooter, can be tuned
 
 
     

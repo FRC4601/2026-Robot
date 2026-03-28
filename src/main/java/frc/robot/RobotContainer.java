@@ -92,11 +92,16 @@ public class RobotContainer {
             new IntakeCommand(m_intake)
         ));
 
+        NamedCommands.registerCommand(("AmongUs"), 
+            new AimAndSetSpeed(m_turret, m_shooter, m_vision)
+        );
+          
+
+
+
     
 
         m_autoChooser = AutoBuilder.buildAutoChooser("Get Off Line Auto");
-
-
 
         SmartDashboard.putData("Auto Chooser", m_autoChooser);
 
@@ -187,7 +192,7 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
+        
          return m_autoChooser.getSelected();
 
         

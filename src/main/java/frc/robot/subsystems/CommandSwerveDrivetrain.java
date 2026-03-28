@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -223,6 +224,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
             System.exit(-1);
         }
+    }
+
+
+      public Command followPathCommand(String pathName) {
+        try {
+            return followPathCommand(PathPlannerPath.fromPathFile(pathName));
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException(pathName + " does not exist");
+        }
+    }
+
+    public Command followPathCommand(PathPlannerPath path) {
+        return AutoBuilder.followPath(path);
     }
 
 

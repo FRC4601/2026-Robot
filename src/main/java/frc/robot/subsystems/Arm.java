@@ -67,25 +67,25 @@ public class Arm extends SubsystemBase {
 
 
   public double ArmPosition() {
-    return absoluteEncoder.get()*360; //Get the arm angle in degrees. The absolute encoder returns a value between 0 and 1.
+    return 360 - absoluteEncoder.get()*360; //Get the arm angle in degrees. The absolute encoder returns a value between 0 and 1.
   }
 
   public void setArmSpeed(double speed) {
 
     //Need to debug this to make sure that the arm movement is correctly limited. 
 
-    /* 
+    
     if ((ArmPosition() >= ArmConstants.ARM_EXTENDED_POSITION && speed > 0) 
          || (ArmPosition() <= ArmConstants.ARM_RETRACTED_POSITION && speed < 0)) {
       armMotor.set(0);
     } else {
       armMotor.set(speed);
     }
-      */
+      
 
       //for now just running the motor with no limits
 
-      armMotor.set(speed);
+      
 
   }
 
@@ -98,7 +98,7 @@ public class Arm extends SubsystemBase {
   public void moveArmToPosition(double targetPosition) {
     double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
-    output = MathUtil.clamp(output, -0.2, 0.2); //limit to half power at most to prevent violent movements. Adjust as necessary.
+    output = MathUtil.clamp(output, -0.3, 0.3); //limit to half power at most to prevent violent movements. Adjust as necessary.
     
     if (output > 0 && currentPosition >= ArmConstants.ARM_EXTENDED_POSITION) {
       
@@ -126,7 +126,7 @@ public class Arm extends SubsystemBase {
         case POSITION_A:
             moveArmToPosition(ArmConstants.POSITION_A_DEGREES);
 
-            if (armTimer.hasElapsed(0.5)) { // time spent at each position
+            if (armTimer.hasElapsed(0.75)) { // time spent at each position
                 currentArmState = ArmState.POSITION_B;
                 armTimer.reset();
             }
@@ -135,7 +135,7 @@ public class Arm extends SubsystemBase {
         case POSITION_B:
             moveArmToPosition(ArmConstants.POSITION_B_DEGREES);
 
-            if (armTimer.hasElapsed(0.5)) {
+            if (armTimer.hasElapsed(0.75)) {
                 currentArmState = ArmState.POSITION_A;
                 armTimer.reset();
             }

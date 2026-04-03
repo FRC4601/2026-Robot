@@ -9,18 +9,18 @@ public final class Constants {
     public static final double tolerance = 0.0; // Tolerance in rotations for arm position
     public static final double kd = 0; 
     public static final double ki = 0;
-    public static final double kp = .0067; // PID Values for the arm position controller. 
+    public static final double kp = .015; // PID Values for the arm position controller. 
     public static final double ks = 0;
     public static final double kg = .02;
     public static final double kv = 0;
     public static final double ka = 0;
 
-    public static final double ARM_EXTENDED_POSITION = 0;
-    public static final double ARM_RETRACTED_POSITION = 0; // in motor rotations. needs to be set through testing
+    public static final double ARM_EXTENDED_POSITION = 140;
+    public static final double ARM_RETRACTED_POSITION = 3; // in motor rotations. needs to be set through testing
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
-    public static final int ARM_ABSOLUTE_ENCODER_PORT = 0; // needs to be set when absolute encoder is added
+    public static final int ARM_ABSOLUTE_ENCODER_PORT = 4; // needs to be set when absolute encoder is added
 
-    public static final double POSITION_A_DEGREES = 70; // needs to be set through testing  
+    public static final double POSITION_A_DEGREES = 90; // needs to be set through testing  
     public static final double POSITION_B_DEGREES = 40;
   
   }
@@ -49,7 +49,7 @@ public final class Constants {
     public static final int TURRET_MOTOR_ID = 21;
     public static final double kd = 0;
     public static final double ki = 0;
-    public static final double kp = 0.01; // PID Values for the turret position controller. These will need to be tuned.
+    public static final double kp = 0.005; // PID Values for the turret position controller. These will need to be tuned.
     public static final double MAX_ANGLE_DEGREES = 90.0; // Maximum allowed turret angle in degrees (adjust as needed)
     public static final double MIN_ANGLE_DEGREES = -90.0; // Minimum allowed turret angle in degrees (adjust as needed)
   }

@@ -1,8 +1,14 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Stager;
 import frc.robot.subsystems.Turret;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 
 /**
@@ -21,25 +27,50 @@ import frc.robot.subsystems.Turret;
  * isReadyToShoot() returning true.
  */
 
-public class AimAndSetSpeed extends Command {
+public class AimLL extends Command {
 
     private final Turret turret;
     private final Shooter shooter;
     private final Vision vision;
+    private final Arm arm;
+    private final Timer timer;
+    private final int start_ms;
+    private final double end;
+    private final Timer shootTimer;
 
 
 
-    public AimAndSetSpeed(Turret turret, Shooter shooter, Vision vision) {
+
+
+    public AimLL(Turret turret, Shooter shooter, Vision vision,Arm arm, int start, double end) {
         this.turret = turret;
         this.shooter = shooter;
         this.vision = vision;
+        this.arm = arm;
+        this.start_ms = start;
+        this.end = end;
+    
+        this.timer = new Timer();
+        this.shootTimer = new Timer();
+
         addRequirements(turret, shooter); // Declare subsystem dependencies
     
 }
 @Override
 public void initialize() {
         // Ensure we're on the right Limelight pipeline for April Tags
-        vision.setPipeline(Vision.PIPELINE_APRILTAG); // TODO: Set to your April Tag pipeline index
+        //vision.setPipeline(Vision.PIPELINE_APRILTAG); // TODO: Set to your April Tag pipeline index
+        
+        //arm.startOscillate();
+
+        timer.reset();
+        timer.start();
+
+        shootTimer.start();
+
+
+    //arm.moveArmToPosition(90);
+
     }
 
 @Override
@@ -53,8 +84,9 @@ public void execute() {
 
         else{
             // Target is visible — read tx and ty for aiming and speed control
+
             double tx = vision.getTx();
-            double ty = vision.getTy();
+            //double ty = vision.getTy();
 
         // --- Turret alignment ---
         // tx is the horizontal error. We drive the turret proportionally to close that error.
@@ -65,22 +97,41 @@ public void execute() {
                     // --- Shooter speed ---
         // Convert ty to distance, then look up the correct RPM
 
-            double distance = Shooter.tyToDistance(ty);
-            shooter.setVelocityFromDistance(distance);
+            //double distance = Shooter.tyToDistance(ty);
+            //shooter.setVelocityFromDistance(distance);
+
+            //arm.oscillate();
 
         }
+
+        updateDashboard();
 
     }
 
     public boolean isReadyToShoot() {
         
-        return turret.isAligned(vision.getTx()) && shooter.isAtSpeed() && vision.hasTarget();
+        return turret.isAligned(vision.getTx()) && shooter.isAtSpeed();
     }
 
         @Override
         public void end(boolean interrupted) {
             turret.stop();
-            shooter.stopShooter();
+            
         }
+
+    public boolean isFinished() {
+        return turret.isAligned(vision.getTx());
+    }
+    
+    public void updateDashboard() {
+
+        SmartDashboard.putBoolean("Ready To Shoot", isReadyToShoot());
+        SmartDashboard.putBoolean("Turret Aligned ", turret.isAligned(vision.getTx()));    
+        SmartDashboard.putNumber("Timer", shootTimer.get());
+
+    }   
+
+
 }
+
 

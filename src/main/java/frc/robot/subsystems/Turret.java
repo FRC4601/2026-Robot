@@ -40,6 +40,9 @@ public class Turret extends SubsystemBase {
   public Turret() {
     turretMotor = new SparkMax(TurretConstants.TURRET_MOTOR_ID, MotorType.kBrushless);
     turretConfig = new SparkMaxConfig();
+    turretConfig.smartCurrentLimit(40);
+    turretConfig.secondaryCurrentLimit(30);
+
     turretConfig.idleMode(IdleMode.kBrake);
     turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
@@ -54,22 +57,16 @@ public class Turret extends SubsystemBase {
   //Method to auto align the turret to be facing the april tag target. This will be used in the AimAndSetSpeed command.
   public void trackTarget(double tx) {
     double output = turretPIDController.calculate(tx, 0.0);
-    output = MathUtil.clamp(output, -0.5, 0.5);
-
-    if (output > 0 && getAngleDegrees() >= TurretConstants.MAX_ANGLE_DEGREES) {
-      output = 0; // Prevent moving beyond the maximum anglels
-    } else if (output < 0 && getAngleDegrees() <= TurretConstants.MIN_ANGLE_DEGREES) {
-      output = 0; // Prevent moving beyond the minimum angle
-    }
-    turretMotor.set(output);
+    output = MathUtil.clamp(output, -0.2, 0.2);
+    rotate(-output);
 }
 
 
-public void setTargetAngleDegrees(double targetAngleDegrees) {
+  public void setTargetAngleDegrees(double targetAngleDegrees) {
   double output = turretPIDController.calculate(getAngleDegrees(), targetAngleDegrees);
 
 
-  output = MathUtil.clamp(output, -0.4, 0.4);   
+  output = MathUtil.clamp(output, -0.5, 0.5);   
   
   rotate(output);
 
@@ -115,8 +112,9 @@ public void setTargetAngleDegrees(double targetAngleDegrees) {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret/AngleDegrees", getAngleDegrees());
-        SmartDashboard.putNumber("Turret/TargetDegrees", targetAngleDegrees);
+        SmartDashboard.putNumber("Turret Angle ", getAngleDegrees());
+        SmartDashboard.putNumber("Turret Target Angle", targetAngleDegrees);
+        
 ;
     }
 

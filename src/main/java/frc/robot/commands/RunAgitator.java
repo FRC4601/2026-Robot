@@ -40,6 +40,7 @@ public class RunAgitator extends Command {
     @Override
     public void end(boolean interrupted) {
         m_agitator.stopAgitator();
+        
     }
 
     // Command runs until the button is released (whileTrue handles this)

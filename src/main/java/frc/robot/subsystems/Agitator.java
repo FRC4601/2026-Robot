@@ -51,7 +51,15 @@ public class Agitator extends SubsystemBase {
 
        
     agitatorConfig.idleMode(IdleMode.kCoast);
-    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); // 
+    agitatorConfig.smartCurrentLimit(40);
+    agitatorConfig.secondaryCurrentLimit(30);
+
+
+    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    
+    
+    
+    // 
 
     canrangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2500; // If CANrange has a signal strength of at least 2500, it is a valid measurement.
     canrangeConfig.ProximityParams.ProximityThreshold = BALL_DETECTION_THRESHOLD; // If CANrange detects an object within 0.05 meters, it will trigger the "isDetected" signal.
@@ -94,7 +102,7 @@ public class Agitator extends SubsystemBase {
                 break;
 
             case UNJAMMING:
-                agitatorMotor.set(0.75);
+                agitatorMotor.set(0.75); // this is positive on purpose, it's going backwards
 
                 if (deadSpotTimer.hasElapsed(0.25)) {
                     currentState = FeedState.FEEDING;
@@ -131,9 +139,9 @@ public class Agitator extends SubsystemBase {
     @Override
     public void periodic() {
         
-        SmartDashboard.putNumber("Agitator/Speed", agitatorMotor.get());
-        SmartDashboard.putBoolean("Stager Detecting Ball", DetectFuel());
-        SmartDashboard.putNumber("Agitator/Distance", getSensorDistance());
-        SmartDashboard.putNumber("Agitator/SignalStrength", getSignalStrengthDouble());
+        SmartDashboard.putNumber("Speed", agitatorMotor.get());
+        SmartDashboard.putBoolean("Fuel in Stager ", DetectFuel());
+        SmartDashboard.putNumber("CANRange Distance", getSensorDistance());
+        SmartDashboard.putNumber("CANRange SignalStrength", getSignalStrengthDouble());
     }
 }

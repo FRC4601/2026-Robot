@@ -26,17 +26,17 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-
+        intakeTimer.start();
+        m_arm.moveArmToPosition(140);
     }
     @Override
     public void execute() {
-            m_arm.moveArmToPosition(140);
             m_intake.runIntake(1);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_intake.stopIntake();  
+        m_intake.stopIntake();
         intakeTimer.reset();
     }
 

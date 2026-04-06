@@ -9,7 +9,7 @@ public final class Constants {
     public static final double tolerance = 0.0; // Tolerance in rotations for arm position
     public static final double kd = 0; 
     public static final double ki = 0;
-    public static final double kp = .015; // PID Values for the arm position controller. 
+    public static final double kp = .017; // PID Values for the arm position controller. 
     public static final double ks = 0;
     public static final double kg = .02;
     public static final double kv = 0;
@@ -20,7 +20,7 @@ public final class Constants {
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
     public static final int ARM_ABSOLUTE_ENCODER_PORT = 4; // needs to be set when absolute encoder is added
 
-    public static final double POSITION_A_DEGREES = 90; // needs to be set through testing  
+    public static final double POSITION_A_DEGREES = 70; // needs to be set through testing  
     public static final double POSITION_B_DEGREES = 40;
   
   }
@@ -31,11 +31,11 @@ public final class Constants {
 
   public static class AgitatorConstants {
     public static final int AGITATOR_MOTOR_ID = 22;
-    public static final double FEED_SPEED = 1; // needs to be set when agitator motor added
+    public static final double FEED_SPEED = 1;
   }
 
   public static class StagerConstants {
-    public static final int STAGER_MOTOR_ID = 24; // needs to be set when stager motor added
+    public static final int STAGER_MOTOR_ID = 24;
   }
 
   public static class ShooterConstants {

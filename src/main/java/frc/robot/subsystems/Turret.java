@@ -40,8 +40,8 @@ public class Turret extends SubsystemBase {
   public Turret() {
     turretMotor = new SparkMax(TurretConstants.TURRET_MOTOR_ID, MotorType.kBrushless);
     turretConfig = new SparkMaxConfig();
-    turretConfig.smartCurrentLimit(40);
-    turretConfig.secondaryCurrentLimit(30);
+    turretConfig.smartCurrentLimit(30);
+    turretConfig.secondaryCurrentLimit(40);
 
     turretConfig.idleMode(IdleMode.kBrake);
     turretMotor.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -57,7 +57,7 @@ public class Turret extends SubsystemBase {
   //Method to auto align the turret to be facing the april tag target. This will be used in the AimAndSetSpeed command.
   public void trackTarget(double tx) {
     double output = turretPIDController.calculate(tx, 0.0);
-    output = MathUtil.clamp(output, -0.2, 0.2);
+    output = MathUtil.clamp(output, -0.3, 0.3);
     rotate(-output);
 }
 
@@ -100,7 +100,7 @@ public class Turret extends SubsystemBase {
         turretMotor.set(0);
         return;
       }
-      turretMotor.set(speed);
+      turretMotor.set(0.5*speed);
     }
 
     /**

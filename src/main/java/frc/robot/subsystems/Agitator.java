@@ -51,8 +51,8 @@ public class Agitator extends SubsystemBase {
 
        
     agitatorConfig.idleMode(IdleMode.kCoast);
-    agitatorConfig.smartCurrentLimit(40);
-    agitatorConfig.secondaryCurrentLimit(30);
+    agitatorConfig.smartCurrentLimit(30);
+    agitatorConfig.secondaryCurrentLimit(40);
 
 
     agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -104,7 +104,7 @@ public class Agitator extends SubsystemBase {
             case UNJAMMING:
                 agitatorMotor.set(0.75); // this is positive on purpose, it's going backwards
 
-                if (deadSpotTimer.hasElapsed(0.25)) {
+                if (deadSpotTimer.hasElapsed(2)) {
                     currentState = FeedState.FEEDING;
                     deadSpotTimer.reset();
                 }
@@ -119,7 +119,7 @@ public class Agitator extends SubsystemBase {
 
 
      public boolean DetectFuel(){
-    return getSensorDistance() < .05 && getSignalStrengthDouble() > 2500;
+    return (getSensorDistance() < .02 && getSignalStrengthDouble() > 6500);
   }
 
     public double getSensorDistance(){

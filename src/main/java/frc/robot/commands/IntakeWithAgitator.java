@@ -34,7 +34,7 @@ public class IntakeWithAgitator extends Command {
     @Override
     public void execute() {
         m_intake.runIntake(m_wheelspeed);
-        m_agitator.setAgitatorSpeed(-m_wheelspeed);
+        m_agitator.setAgitatorSpeed(-0.5*m_wheelspeed);
     }
 
     @Override

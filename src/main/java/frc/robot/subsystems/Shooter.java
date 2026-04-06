@@ -36,19 +36,11 @@ public class Shooter extends SubsystemBase {
    private static final TreeMap<Double, Double> DISTANCE_TO_RPM = new TreeMap<>();
 
     static {
-        // Example values — replace with real tuned data
-        //Once our robot can shoot. We will find the rpms that allow us to score from different distances and add these pairs to the table
-        DISTANCE_TO_RPM.put(54.0,  3500.0);
-        DISTANCE_TO_RPM.put(84.0,  4000.0);
-        DISTANCE_TO_RPM.put(114.0, 4500.0);
-        DISTANCE_TO_RPM.put(144.0, 5000.0);
-        DISTANCE_TO_RPM.put(180.0, 5500.0);
-
-        //9.5 ft horizontal at 4500 rpm
-        //12 ft horizontal at 5000 rpm
-        //7 ft horizontal at 4000 rpm
-        //4.5 ft horizontal at 3500 rpm
-        // mr wilaj-- check your email!! zack has an important message!
+        DISTANCE_TO_RPM.put(40.0, 3950.0); // fabricated to help with closer distances
+        DISTANCE_TO_RPM.put(83.0,  4500.0);
+        DISTANCE_TO_RPM.put(111.0,  5000.0);
+        DISTANCE_TO_RPM.put(155.0,  5500.0);
+        DISTANCE_TO_RPM.put(206.6, 6000.0); // fabricated to help with farther distances
     }
 
     // Current RPM setpoint
@@ -62,9 +54,11 @@ public class Shooter extends SubsystemBase {
     leaderMotor = new TalonFX(ShooterConstants.SHOOTER_MOTOR_ID_1);
     followerMotor = new TalonFX(ShooterConstants.SHOOTER_MOTOR_ID_2);
     
-    leaderConfig = new TalonFXConfiguration().withMotorOutput(
-        new MotorOutputConfigs()
-        .withPeakReverseDutyCycle(0));
+    leaderConfig = new TalonFXConfiguration();
+        //.withMotorOutput(
+        //new MotorOutputConfigs()
+        //.withPeakReverseDutyCycle(0));
+        
         followerConfig = new TalonFXConfiguration();
 
     // Velocity PID — slot 0

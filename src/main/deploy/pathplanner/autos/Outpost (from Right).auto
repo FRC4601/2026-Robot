@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "OpenHopper"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost Start (Right)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RunAgitatorForOutpost"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Outpost End"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootButGoodButGooder"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

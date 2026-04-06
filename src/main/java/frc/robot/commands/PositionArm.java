@@ -3,6 +3,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Hopper;
 import frc.robot.Constants.ArmConstants;
+import edu.wpi.first.wpilibj.Timer;
 
 
 public class PositionArm extends Command {
@@ -10,11 +11,15 @@ public class PositionArm extends Command {
     private final Arm arm;
     private final Hopper hopper;
     private final double targetPosition;
+    private final Timer armTimer;
+    private final double end;
 
-    public PositionArm(Arm arm, Hopper hopper, double targetPosition) {
+    public PositionArm(Arm arm, Hopper hopper, double targetPosition, double end) {
         this.arm = arm;
         this.hopper = hopper;
         this.targetPosition = targetPosition;
+        armTimer = new Timer();
+        this.end = end;
         addRequirements(arm, hopper); 
        
     }
@@ -35,14 +40,12 @@ public void execute() {
 @Override
 public void end(boolean interrupted) {
      
-
-
 }
 
 @Override
 public boolean isFinished() {
-    // Check if the arm has reached the target position within a certain tolerance
-    return false;
+    // Check if the arm has reached the target position within a certain tolerance (we gave up, but maybe later)
+    return armTimer.hasElapsed(end);
 }
 
 

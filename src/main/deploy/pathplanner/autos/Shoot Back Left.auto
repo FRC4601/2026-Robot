@@ -5,19 +5,25 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Collect Right"
+                  "pathName": "Shoot Back Left"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeRight"
+                  "name": "ShootBackIntake"
                 }
               }
             ]
@@ -26,7 +32,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootButGood"
+            "name": "ShootBack"
           }
         }
       ]

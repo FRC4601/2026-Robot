@@ -83,9 +83,9 @@ public void execute() {
         
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
-        if (oscillatingTimer.hasElapsed(1)){
+        /*if (oscillatingTimer.hasElapsed(3)){
             arm.oscillate();
-        }
+        }*/
          // Move the arm back and forth while shooting to help with feeding
 
 

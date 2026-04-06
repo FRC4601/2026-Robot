@@ -1,33 +1,35 @@
 package frc.robot.commands;
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.subsystems.Stager;
+import edu.wpi.first.wpilibj.Timer; 
 
-
+// Runs the stager.
 
 public class RunStager extends Command {
 
     private final Stager stager;
-    private final Supplier<Boolean> readyToShoot;
+    private final double wheelspeed;
+    private final double end;
+    private final Timer stagerTimer;
 
-    public RunStager(Stager stager, Supplier<Boolean> readyToShoot) {
+    public RunStager(Stager stager, double wheelspeed, double end) {
         this.stager = stager;
-        this.readyToShoot = readyToShoot;
-        addRequirements(stager); // Declare subsystem dependencies
-    }
-@Override
-public void initialize() {
-
+        this.wheelspeed = wheelspeed;
+        this.end = end;
+        this.stagerTimer = new Timer();
+        addRequirements(stager);
     }
 
-@Override
-public void execute() {
-    if (readyToShoot.get()) {
-        stager.setStagerSpeed(0.5); // Set to desired staging speed (tune as needed)
-    } else {
-        stager.setStagerSpeed(0.0); // Stop stager if not ready to shoot
+    @Override
+    public void initialize() {
+        stagerTimer.reset();
+        stagerTimer.start();
     }
+
+    @Override
+    public void execute() {
+        stager.setStagerSpeed(wheelspeed);
     }
 
     @Override
@@ -35,10 +37,9 @@ public void execute() {
         stager.stopStager();
     }
 
-    // Command runs until the button is released (whileTrue handles this)
     @Override
     public boolean isFinished() {
-        return false;
+        return stagerTimer.hasElapsed(end);
     }
 }
 

@@ -17,75 +17,56 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer; 
 
 
+// The arm with the intake wheel on it
+
 public class Arm extends SubsystemBase {
 
+  // Initializing the motor
   private final SparkMax armMotor;
   private final SparkMaxConfig armConfig;
+
+  // Initializing the PID
   private final PIDController armPIDController;
   private final DutyCycleEncoder absoluteEncoder; //REV throughbore encoder.
+
+  // Helps with the oscillating during shooting (NOT instance variables)
   private enum ArmState { POSITION_A, POSITION_B }
   private ArmState currentArmState = ArmState.POSITION_A;
   private Timer armTimer = new Timer();
-
- 
-
-   /** Creates a new Arm. */
   
-
-  
+  // The constructor--configures the motor and PID
   public Arm() {
 
-     // Replace 0 with the actual DIO port number for the limit switch
     armMotor = new SparkMax(ArmConstants.ARM_MOTOR_ID, MotorType.kBrushless);
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(IdleMode.kBrake);
     armMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT); // Need encoder port here
-    
 
-
-    // Initialize the PID controller with the constants from ArmConstants
     armPIDController = new PIDController(ArmConstants.kp, ArmConstants.ki, ArmConstants.kd);
     armPIDController.setTolerance(ArmConstants.tolerance);
 
-
-
-  
-    
-  }
-
-  @Override
-  public void periodic() {
-    //write the current arm position and speed to the dashboard for testing purposes. 
-    updateDashboard();
   }
 
   public boolean isAtSetpoint() {
-    //Check if the arm is within the tolerance of the target position
+    // Check if the arm is within the tolerance of the target position
     return armPIDController.atSetpoint();
   } 
 
 
   public double ArmPosition() {
-    return 360 - absoluteEncoder.get()*360; //Get the arm angle in degrees. The absolute encoder returns a value between 0 and 1.
+    // Convert arm angle to degrees
+    return 360 - absoluteEncoder.get()*360;
   }
 
   public void setArmSpeed(double speed) {
 
-    //Need to debug this to make sure that the arm movement is correctly limited. 
-
-    
     if ((ArmPosition() >= ArmConstants.ARM_EXTENDED_POSITION && speed > 0) 
          || (ArmPosition() <= ArmConstants.ARM_RETRACTED_POSITION && speed < 0)) {
       armMotor.set(0);
     } else {
       armMotor.set(speed);
     }
-      
-
-      //for now just running the motor with no limits
-
-      
 
   }
 
@@ -93,8 +74,7 @@ public class Arm extends SubsystemBase {
     armMotor.set(0);
   }
 
-  //method to set arm to target position with PID control. 
-
+  // Method to set arm to target position with PID control. 
   public void moveArmToPosition(double targetPosition) {
     double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
@@ -110,14 +90,11 @@ public class Arm extends SubsystemBase {
     setArmSpeed(output);
   }
 
-
-
-
   public void startOscillate() {
     armTimer.reset();
     armTimer.start();
     currentArmState = ArmState.POSITION_A; // start from a known position
-}
+  }
 
 
   public void oscillate() {
@@ -141,16 +118,15 @@ public class Arm extends SubsystemBase {
             }
             break;
     }
-}
-  
+  }
 
-  public void updateDashboard() {
-    // When arm is added, we can move the arm manually and see how many motor rotations will fully extend the arm
+  // Runs every 20ms while the robot is running
+  @Override
+  public void periodic() {
     SmartDashboard.putNumber("Arm Angle", ArmPosition());  
     SmartDashboard.putNumber("Arm Speed", armMotor.get());
     SmartDashboard.putBoolean("Arm At Setpoint", armPIDController.atSetpoint());
     SmartDashboard.putNumber("Arm Target Position", armPIDController.getSetpoint());
   }
-
 
 }

@@ -1,7 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Hopper;
+
+import frc.robot.subsystems.*;
 import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -18,35 +18,25 @@ public class PositionArm extends Command {
         this.arm = arm;
         this.hopper = hopper;
         this.targetPosition = targetPosition;
-        armTimer = new Timer();
         this.end = end;
+        armTimer = new Timer();
         addRequirements(arm, hopper); 
-       
-    }
-@Override
-public void initialize() {
-
-    hopper.openHopper(); // Opens the hopper to allow the arm to extend
-
     }
 
-@Override
-public void execute() {
+    @Override
+    public void initialize() {
+        hopper.openHopper(); // Opens the hopper to allow the arm to extend
+    }
 
-    arm.moveArmToPosition(targetPosition);
-    
-}
+    @Override
+    public void execute() {
+        arm.moveArmToPosition(targetPosition);
+    }
 
-@Override
-public void end(boolean interrupted) {
-     
-}
-
-@Override
-public boolean isFinished() {
-    // Check if the arm has reached the target position within a certain tolerance (we gave up, but maybe later)
-    return armTimer.hasElapsed(end);
-}
-
+    @Override
+    public boolean isFinished() {
+        // Check if the arm has reached the target position within a certain tolerance (we gave up, but maybe later)
+        return armTimer.hasElapsed(end);
+    }
 
 }

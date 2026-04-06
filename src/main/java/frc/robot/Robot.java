@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors...
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
@@ -11,28 +7,24 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-//import edu.wpi.first.wpilibj2.command.Commands;
-//import frc.robot.subsystems.Turret;
-
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
 
-    private final RobotContainer m_robotContainer;
-    //public final Turret m_turret;
+    private Command autonomousCommand;
+
+    private final RobotContainer robotContainer;
 
     /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+    private final HootAutoReplay timeAndJoystickReplay = new HootAutoReplay()
         .withTimestampReplay()
         .withJoystickReplay();
 
     public Robot() {
-        m_robotContainer = new RobotContainer();
-        //m_turret = new Turret();
+        this.robotContainer = new RobotContainer();
     }
 
     @Override
     public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
+        timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run(); 
     }
 
@@ -54,14 +46,14 @@ public class Robot extends TimedRobot {
             
         }
 
-        //m_robotContainer.getVision().setActiveGoalTags();
+        //robotContainer.getVision().setActiveGoalTags();
 
 
         
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        if (autonomousCommand != null) {
+            CommandScheduler.getInstance().schedule(autonomousCommand);
         }
 
 
@@ -83,10 +75,10 @@ public class Robot extends TimedRobot {
                
             }
 
-        //m_robotContainer.getVision().setActiveGoalTags();
+        //robotContainer.getVision().setActiveGoalTags();
 
-        if (m_autonomousCommand != null) {
-                CommandScheduler.getInstance().cancel(m_autonomousCommand);
+        if (autonomousCommand != null) {
+                CommandScheduler.getInstance().cancel(autonomousCommand);
              }
 
 
@@ -97,11 +89,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {}
 
     @Override
-    public void teleopExit() {
-
-        // Commands.run(() -> m_turret.setTargetAngleDegrees(0), m_turret).finallyDo(() -> m_turret.stop());
-
-    }
+    public void teleopExit() {}
 
     @Override
     public void testInit() {

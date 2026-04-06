@@ -1,60 +1,33 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// This file sets up autos, creates swerve drive, and binds controller buttons to commands.
 
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Optional;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Stager;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Vision;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.commands.AimLL;
+
+import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
+import frc.robot.commands.*;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Agitator;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.commands.RunStager;
-import frc.robot.commands.RunAgitator;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Hopper;
-import frc.robot.commands.Shoot;
-import frc.robot.subsystems.Intake;
-import frc.robot.commands.PositionArm;
-import frc.robot.commands.Eject; 
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.IntakeCommandTeleop;
-import frc.robot.commands.AimAndShoot;
-import frc.robot.commands.IntakeWithAgitator;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+
+import com.pathplanner.lib.auto.*;
 import com.pathplanner.lib.path.PathPlannerPath;
-import frc.robot.commands.ShootLL;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.IntakeCommandTeleop;
-
-
 
 public class RobotContainer {
+
+    // Very basic things about the robot. Driving, controllers, & subsystems.
+
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -73,104 +46,107 @@ public class RobotContainer {
 
     private final CommandXboxController xboxController = new CommandXboxController(1);
 
-    public final Vision m_vision = new Vision();
-    public final Turret m_turret = new Turret();
-    public final Shooter m_shooter = new Shooter();
-    public final Stager m_stager = new Stager();
-    public final Agitator m_agitator = new Agitator();
-    public final Arm m_arm = new Arm();
-    public final Intake m_intake = new Intake();
-    public final Hopper m_hopper = new Hopper();
+    public final Vision vision = new Vision();
+    public final Turret turret = new Turret();
+    public final Shooter shooter = new Shooter();
+    public final Stager stager = new Stager();
+    public final Agitator agitator = new Agitator();
+    public final Arm arm = new Arm();
+    public final Intake intake = new Intake();
+    public final Hopper hopper = new Hopper();
 
 
-    //private final AimLL aimLL = new AimLL( m_turret, m_shooter, m_vision, m_arm, 0, 100);
-    SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+    //private final AimLL aimLL = new AimLL(turret, shooter, vision, arm, 0, 100);
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     //April Tags to Read: 9,10,8,5,11,2,27,26,25,18,21,24
+        // Since we only want the april tags on the hub, we ignore the rest
     
 
-    // this is where the commands for auto will go!
+    // Everything here is used for autos
     public RobotContainer() {
-
 
         NamedCommands.registerCommand("IntakeLeft", 
             new SequentialCommandGroup(
                 new WaitCommand(1.1),
-                new IntakeCommand(m_intake, m_arm, 3.3)
+                new PositionArm(arm, hopper, 140, 1),
+                new IntakeCommand(intake, 2.3)
             )
         );
 
         NamedCommands.registerCommand("IntakeRight",
             new SequentialCommandGroup(
                 new WaitCommand(1.1),
-                new IntakeCommand(m_intake, m_arm, 2.3)
-            )
-        );
-
-        NamedCommands.registerCommand("ShootButGood",
-            new SequentialCommandGroup(
-                new AimLL(m_turret, m_shooter, m_vision, m_arm, 0, 1),
-                new ShootLL(m_agitator, m_shooter, m_stager, drivetrain, m_arm, 0, MaxSpeed, 0, 8, m_vision)
+                new PositionArm(arm, hopper, 140, 1),
+                new IntakeCommand(intake, 2.3) // maybe change the time?
             )
         );
 
         NamedCommands.registerCommand("OutpostIntake",
-            new IntakeCommand(m_intake, m_arm, 3.5)
+            new SequentialCommandGroup(
+                new PositionArm(arm, hopper, 140, 1),
+                new IntakeCommand(intake, 2.5)
+            )
         );
 
         NamedCommands.registerCommand("ShootBackIntake",
             new SequentialCommandGroup(
                 new WaitCommand(2.1),
-                new IntakeCommand(m_intake, m_arm, 2.5)
+                new PositionArm(arm, hopper, 140, 1),
+                new IntakeCommand(intake, 1.5)
+            )
+        );
+
+        NamedCommands.registerCommand("ShootButGood",
+            new SequentialCommandGroup(
+                new AimLL(turret, shooter, vision, 1),
+                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 8, 1)
             )
         );
 
         NamedCommands.registerCommand("ShootBack",
-            new Shoot(m_agitator, m_shooter, m_stager, drivetrain, m_arm, 4500, MaxSpeed, 0, 10)
-        );
-
-        NamedCommands.registerCommand("ShootBack",
-            new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,5500 ,1, 0, 5)
-        );
-
-        NamedCommands.registerCommand("Unjam?",
-            new Eject(m_agitator, m_arm, 2.5)
+            new Shoot(agitator, shooter, stager, arm, 4500, 1, 10)
         );
 
         NamedCommands.registerCommand("ShootButGoodButGooder",
             new SequentialCommandGroup(
-                new AimLL(m_turret, m_shooter, m_vision, m_arm, 0, 1),
-                new Eject(m_agitator, m_arm, 1.25),
-                new ShootLL(m_agitator, m_shooter, m_stager, drivetrain, m_arm, MaxAngularRate, MaxSpeed, 0, 4.5, m_vision),
-                new Eject(m_agitator, m_arm, 1.25),
-                new ShootLL(m_agitator, m_shooter, m_stager, drivetrain, m_arm, MaxAngularRate, MaxSpeed, 0, 4.5, m_vision),
-                new Eject(m_agitator, m_arm, 1.25),
-                new ShootLL(m_agitator, m_shooter, m_stager, drivetrain, m_arm, MaxAngularRate, MaxSpeed, 0, 4.5, m_vision)
+                new AimLL(turret, shooter, vision, 1),
+                new Unjam(agitator, 1.25),
+                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1),
+                new Unjam(agitator, 1.25),
+                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1),
+                new Unjam(agitator, 1.25),
+                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1)
             )
         );
 
+        NamedCommands.registerCommand("Unjam?",
+            new Unjam(agitator, 2.5)
+        );
+
         NamedCommands.registerCommand("OpenHopper",
-            new PositionArm(m_arm, m_hopper, 140, 2)
+            new PositionArm(arm, hopper, 140, 2)
         );
 
         NamedCommands.registerCommand("RunAgitatorForOutpost",
-            new RunAgitator(m_agitator, 1, 5)
+            new RunAgitator(agitator, 1, 5)
         );
-
-          
 
         drivetrain.configureAutoBuilder(); 
 
 
-        m_autoChooser = AutoBuilder.buildAutoChooser("Get Off Line Auto");
+        autoChooser = AutoBuilder.buildAutoChooser("Get Off Line Auto");
 
-        SmartDashboard.putData("Auto Chooser", m_autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         configureBindings();
     }
 
 
+    // Swerve drive. Created automatically.
+
     private void configureBindings() {
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -206,62 +182,43 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        //Controller 2 Commands
-        // Aim and shoot while holding the right trigger. The stager will run when ready to shoot (wheels are at speed, target is found, turret is aimed)
-
-        //xboxController.rightTrigger(0.5).whileTrue(
-           // aimAndSetSpeed.alongWith(new RunStager(m_stager, aimAndSetSpeed::isReadyToShoot), new RunAgitator(m_agitator, aimAndSetSpeed::isReadyToShoot,.25)
-           // ));
-
-       
-
-        //Manual controls for testing the arm, intake, agitator, and shooter
-        //Use these to make sure all motors are responding and spinning in the correct direction
 
 
+        // Setting up the controls for the copilot
 
-        xboxController.y().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,5500 ,1, 0, 100));
-        xboxController.b().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,4500 ,1, 0, 100));
-        xboxController.a().whileTrue(new Shoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,3500 ,1, 0, 100));
-        //xboxController.a().whileTrue(new AimAndShoot(m_agitator, m_shooter,m_stager, drivetrain, m_arm,5500 ,1,m_turret,-45));
-    
-        //while shooting: power of 1 ~= 5500 rpm, .9  ~= 5000 rpm, .8  ~= 4500 rpm. 
-        
-        xboxController.x().whileTrue(new IntakeCommandTeleop(m_intake));
-         //xboxController.leftTrigger(0.5).whileTrue(Commands.run(() -> m_agitator.setAgitatorSpeed(.75), m_intake).finallyDo(() -> m_agitator.setAgitatorSpeed(0)));
-         //xboxController.rightTrigger(.5).whileTrue(new Eject(m_agitator, m_intake,.75)); 
-        xboxController.rightTrigger(.5).whileTrue(new AimLL(m_turret,m_shooter,m_vision,m_arm,0,3));
-        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(m_agitator, m_shooter,m_stager, drivetrain, m_arm,4000 ,1, 0, 100, m_vision));
+        xboxController.y().whileTrue(new Shoot(agitator, shooter,stager, arm, 5500, 1, 100));
+        xboxController.b().whileTrue(new Shoot(agitator, shooter,stager, arm, 4500, 1, 100));
+        xboxController.a().whileTrue(new Shoot(agitator, shooter,stager, arm, 3500, 1, 100));
 
-        xboxController.leftBumper().whileTrue(new Eject(m_agitator, m_arm, 999));
-        xboxController.rightBumper().onTrue(new PositionArm(m_arm, m_hopper, 140, 999));
-        //xboxController.leftBumper().whileTrue(Commands.run(() -> m_shooter.setVelocity(6000), m_shooter).finallyDo(() -> m_shooter.runShooter(0)));
+        xboxController.x().whileTrue(new IntakeCommand(intake, 999));
 
-        xboxController.povRight().onTrue(new Eject(m_agitator, m_arm, 999));
-        xboxController.povUp().onTrue(new Eject(m_agitator, m_arm, 999));
-        xboxController.povLeft().onTrue(new Eject(m_agitator, m_arm, 999));
-        xboxController.povDown().onTrue(new Eject(m_agitator, m_arm, 999));
+        xboxController.rightTrigger(.5).whileTrue(new AimLL(turret, shooter, vision, 100));
+        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter,stager, drivetrain, arm, vision, 100, 1));
 
+        xboxController.leftBumper().whileTrue(new Unjam(agitator, 999));
+        xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, 140, 999));
+
+        // D-pad controls (all do the same thing lol)
+        xboxController.povRight().onTrue(new Unjam(agitator, 999));
+        xboxController.povUp().onTrue(new Unjam(agitator, 999));
+        xboxController.povLeft().onTrue(new Unjam(agitator, 999));
+        xboxController.povDown().onTrue(new Unjam(agitator, 999));
 
         
+        // Setting up the main driver's controls
 
-        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> m_arm.setArmSpeed(xboxController.getLeftY() * 0.2), m_arm));
-        new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> m_turret.rotate(xboxController.getRightX() * 0.2), m_turret));
-        m_arm.setDefaultCommand(Commands.run(() -> m_arm.setArmSpeed(0), m_arm));
-        m_turret.setDefaultCommand(Commands.run(() -> m_turret.rotate(0), m_turret));
-
-
-        
-
+        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm));
+        new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> turret.rotate(xboxController.getRightX() * 0.2), turret));
+        arm.setDefaultCommand(Commands.run(() -> arm.setArmSpeed(0), arm));
+        turret.setDefaultCommand(Commands.run(() -> turret.rotate(0), turret));
     }
 
 
 
     public Command getAutonomousCommand() {
         
-         return m_autoChooser.getSelected();
+         return autoChooser.getSelected();
 
-        
     }
 
 

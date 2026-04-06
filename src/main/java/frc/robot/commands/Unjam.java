@@ -1,35 +1,34 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer; 
 
-// Runs the agitator.
+// Unjams the balls if stuck in the agitator
 
-public class RunAgitator extends Command {
+public class Unjam extends Command {
 
     private final Agitator agitator;
-    private final double wheelspeed;
     private final double end;
-    private final Timer agitatorTimer;
+    private final Timer unjamTimer;
 
 
-    public RunAgitator(Agitator agitator,double wheelspeed, double end) {
+    public Unjam(Agitator agitator, double end) {
         this.agitator = agitator;
-        this.wheelspeed = wheelspeed;
         this.end = end;
-        this.agitatorTimer = new Timer();
+        unjamTimer = new Timer();
         addRequirements(agitator);
     }
 
+    @Override
     public void initialize() {
-        agitatorTimer.reset();
-        agitatorTimer.start();
+        unjamTimer.reset();
+        unjamTimer.start();
     }
 
     @Override
     public void execute() {
-        agitator.setAgitatorSpeed(wheelspeed);
+        agitator.setAgitatorSpeed(-1);
     }
 
     @Override
@@ -39,6 +38,6 @@ public class RunAgitator extends Command {
 
     @Override
     public boolean isFinished() {
-        return agitatorTimer.hasElapsed(end);
+        return unjamTimer.hasElapsed(end);
     }
 }

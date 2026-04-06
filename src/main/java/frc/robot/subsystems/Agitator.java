@@ -16,25 +16,20 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.AgitatorConstants;
 import frc.robot.Constants.CANRangeConstants;
 
-/**
- * Agitator subsystem — stirs balls in the hopper and feeds them toward the stager.
- * Runs whenever the robot is aligned and ready to shoot, producing a continuous
- * ball stream: Agitator → Stager → Shooter.
- */
+
+// Feeds balls from the intake into the stager
+
 public class Agitator extends SubsystemBase {
 
+    // Initializing the motor
     private final SparkMax agitatorMotor;
     private final SparkMaxConfig agitatorConfig;
     
+    // Initializing the CANrange
     private final CANBus kCANBus = new CANBus("rio");
     private final CANrange canrange = new CANrange(CANRangeConstants.CAN_RANGE_ID,kCANBus); 
     private CANrangeConfiguration canrangeConfig = new CANrangeConfiguration(); 
     public static final double BALL_DETECTION_THRESHOLD = 0.05; // meters, adjust based on testing
-
-
-    /*Balls can hit a deadspot in the agitator. If the CANrange does not detect a ball for a certain amount of time,
-     we can assume that the ball is stuck in the deadspot and try to unjam it 
-     by running the agitator in reverse for a short amount of time.*/
 
     private Timer deadSpotTimer = new Timer();
 
@@ -44,29 +39,26 @@ public class Agitator extends SubsystemBase {
 
 
 
-    
+    // The constructor--configures the motor and CANrange
     public Agitator() {
-    agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);
-    agitatorConfig = new SparkMaxConfig();
 
-       
-    agitatorConfig.idleMode(IdleMode.kCoast);
-    agitatorConfig.smartCurrentLimit(30);
-    agitatorConfig.secondaryCurrentLimit(40);
+        agitatorMotor = new SparkMax(AgitatorConstants.AGITATOR_MOTOR_ID, MotorType.kBrushless);
+        agitatorConfig = new SparkMaxConfig();
 
+        
+        agitatorConfig.idleMode(IdleMode.kCoast);
+        agitatorConfig.smartCurrentLimit(30);
+        agitatorConfig.secondaryCurrentLimit(40);
 
-    agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    
-    
-    
-    // 
+        // The following line will not work post-2026
+        agitatorMotor.configure(agitatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    canrangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2500; // If CANrange has a signal strength of at least 2500, it is a valid measurement.
-    canrangeConfig.ProximityParams.ProximityThreshold = BALL_DETECTION_THRESHOLD; // If CANrange detects an object within 0.05 meters, it will trigger the "isDetected" signal.
+        canrangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2500; // If CANrange has a signal strength of at least 2500, it is a valid measurement.
+        canrangeConfig.ProximityParams.ProximityThreshold = BALL_DETECTION_THRESHOLD; // If CANrange detects an object within 0.05 meters, it will trigger the "isDetected" signal.
 
-    canrangeConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz; // Make the CANrange update as fast as possible at 100 Hz. This requires short-range mode.
+        canrangeConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz; // Make the CANrange update as fast as possible at 100 Hz. This requires short-range mode.
 
-    canrange.getConfigurator().apply(canrangeConfig);
+        canrange.getConfigurator().apply(canrangeConfig);
 
     }
 
@@ -75,16 +67,15 @@ public class Agitator extends SubsystemBase {
     public void startTimer() {
         deadSpotTimer.reset();
         deadSpotTimer.start();
-
     }
 
     public void setAgitatorSpeed(double speed) {
-        agitatorMotor.set(speed);
+        agitatorMotor.set(-speed);
     }
 
-      //State machine to run the agitator and unjam if necessary.
-
-    //Runs each loop cycle while the Shoot command is active to feed balls into the shooter and unjam if necessary
+    
+    // State machine to run the agitator and unjam if necessary.
+    // Runs each loop cycle while the Shoot command is active to feed balls into the shooter and unjam if necessary
     public void feedPeriodic() {
         switch (currentState) {
 
@@ -112,33 +103,25 @@ public class Agitator extends SubsystemBase {
         }
     }
 
-
     public void stopAgitator() {
         agitatorMotor.set(0);
     }
 
-
-     public boolean DetectFuel(){
-    return (getSensorDistance() < .02 && getSignalStrengthDouble() > 6500);
-  }
+    public boolean DetectFuel(){
+        return (getSensorDistance() < .02 && getSignalStrengthDouble() > 6500);
+    }
 
     public double getSensorDistance(){
-    return canrange.getDistance().getValueAsDouble();
-  }
+        return canrange.getDistance().getValueAsDouble();
+    }
 
     public double getSignalStrengthDouble(){
-    return canrange.getSignalStrength().getValueAsDouble();
-  }
+        return canrange.getSignalStrength().getValueAsDouble();
+    }
 
-
-
-
-
-
-
+    // Runs every 20ms while the robot is running
     @Override
     public void periodic() {
-        
         SmartDashboard.putNumber("Speed", agitatorMotor.get());
         SmartDashboard.putBoolean("Fuel in Stager ", DetectFuel());
         SmartDashboard.putNumber("CANRange Distance", getSensorDistance());

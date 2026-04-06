@@ -1,4 +1,4 @@
-//LimelightHelpers v1.14 (REQUIRES LLOS 2026.0 OR LATER)
+// Helps the limelight camera work
 
 package frc.robot;
 

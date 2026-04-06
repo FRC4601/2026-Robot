@@ -10,11 +10,16 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.StagerConstants;
 
+
+// Moves balls from the hopper/agitator to the shooter
+
 public class Stager extends SubsystemBase {
 
+  // Initializing the motor
   private final SparkMax stagerMotor;
   private final SparkMaxConfig stagerConfig;
   
+  // The constructor--configures the motor
   public Stager() {
 
     stagerMotor = new SparkMax(StagerConstants.STAGER_MOTOR_ID, MotorType.kBrushless);
@@ -32,15 +37,15 @@ public class Stager extends SubsystemBase {
   }
 
   public void setStagerSpeed(double speed) {
-    stagerMotor.set(speed);
+    stagerMotor.set(-speed);
   }
 
   public void stopStager() {
     stagerMotor.set(0);
   }
 
-
   public void updateDashboard() {
       SmartDashboard.putNumber("Stager Speed", stagerMotor.get());
   }
+
 }

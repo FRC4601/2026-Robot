@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,6 +8,9 @@ import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import java.util.Map;
 import java.util.HashMap;
+
+
+// The limelight
 
 public class Vision extends SubsystemBase {
 
@@ -34,27 +33,53 @@ public class Vision extends SubsystemBase {
     
     NetworkTableInstance.getDefault().getTable("").getKeys().forEach(key -> 
     System.out.println("NT Key: " + key)
-);
-    
+    );
 
   }
 
-
-  // Method to get the horizontal offset (tx) from the vision system. 
-  // This is the horizontal angle between the limelight crosshair and the center of the April Tag in degrees.
-  // A positive value means the target is to the right of the crosshair, and a negative value means it's to the left.
-  // This value will be used to align the turrent 
-
-   //public double getTx() {
-        //return table.getEntry("tx").getDouble(0.0);
-    //}
-
-    public double getTx() {
+  // Returns tx, the offset of the left-right angle between the limelight and april tag
+  // Positive means apriltag is to the right, negative means apriltag is to the left
+  public double getTx() {
     return LimelightHelpers.getTX("limelight");
-    }
+  }
+
+  // Returns ty, the offset of the up-down angle between the limelight and april tag
+  // Positive means apriltag is up, negative means apriltag is down
+  public double getTy() {
+    return LimelightHelpers.getTY("limelight");
+  }
+
+  // Method to detect whether the limelight has a valid target (April Tag) in view.
+  // The limelight sets the "tv" entry to 1 if it has a valid target, and 0 if it does not.
+  public boolean hasTarget() {
+    return LimelightHelpers.getTV("limelight");
+  }
+
+  public void setPipeline(int pipelineIndex) {
+    table.getEntry("pipeline").setNumber(pipelineIndex);
+  }
+
+  // Method to get the current active pipeline index from the limelight. 
+  // This is useful for debugging to confirm we're on the right pipeline.
+  public int getCurrentPipeline() {
+    return (int) table.getEntry("getpipe").getDouble(0.0);
+  }
 
 
-    /* 
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Limelight TX", getTx());
+    SmartDashboard.putNumber("Limelight TY", getTy());
+    SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
+    SmartDashboard.putNumber("Limelight Pipeline", getCurrentPipeline());
+    //SmartDashboard.putBoolean("On Goal Tag", isOnGoalTag());
+    SmartDashboard.putNumber("tid", table.getEntry("tid").getDouble(-1));
+    SmartDashboard.putBoolean("NT Connected", NetworkTableInstance.getDefault().isConnected());
+    SmartDashboard.putString("NT Address", table.getEntry("tx").getString("no entry"));
+  }
+
+  // Unused code:
+  /* 
     public Map<Integer,Double> getTagTXMap(){
       LimelightHelpers.RawFiducial[] tags = LimelightHelpers.getRawFiducials("limelight");
       Map<Integer, Double> tagTXMap = new HashMap<>();
@@ -82,24 +107,6 @@ public class Vision extends SubsystemBase {
     }
     */
 
-
-
-
-    // Method to get the vertical offset (ty) from the vision system.
-    // This is the vertical angle in degrees between the limelight crosshair and the center of the April Tag in degrees.
-    // Positive means the target is above the crosshair
-
-    public double getTy() {
-        return LimelightHelpers.getTY("limelight");
-    }
-
-
-    // Method to detect whether the limelight has a valid target (April Tag) in view.
-    // The limelight sets the "tv" entry to 1 if it has a valid target, and 0 if it does not.
-    public boolean hasTarget() {
-        return LimelightHelpers.getTV("limelight");
-    }
-
     //public double getTargetID() {
         //return LimelightHelpers.getTargetID("limelight" );
     //}
@@ -113,40 +120,4 @@ public class Vision extends SubsystemBase {
     return false;
    }   
       */
- 
-
-     /**
-     * Switch the active Limelight pipeline.
-     * @param pipelineIndex 0-indexed pipeline number configured in Limelight UI
-     */
-
-    public void setPipeline(int pipelineIndex) {
-        table.getEntry("pipeline").setNumber(pipelineIndex);
-    }
-
-    // Method to get the current active pipeline index from the limelight. This is useful for debugging to confirm we're on the right pipeline.
-    public int getCurrentPipeline() {
-        return (int) table.getEntry("getpipe").getDouble(0.0);
-    }
-
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-
-    
-    SmartDashboard.putNumber("Limelight TX", getTx());
-    SmartDashboard.putNumber("Limelight TY", getTy());
-    SmartDashboard.putBoolean("Limelight Has Target", hasTarget());
-    SmartDashboard.putNumber("Limelight Pipeline", getCurrentPipeline());
-    //SmartDashboard.putBoolean("On Goal Tag", isOnGoalTag());
-    SmartDashboard.putNumber("tid", table.getEntry("tid").getDouble(-1));
-    SmartDashboard.putBoolean("NT Connected", NetworkTableInstance.getDefault().isConnected());
-    SmartDashboard.putString("NT Address", table.getEntry("tx").getString("no entry"));
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
 }

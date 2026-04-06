@@ -1,50 +1,45 @@
 package frc.robot.commands;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Agitator;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Arm;
+
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer; 
 
+// Abandoned. Runs the intake and agitator together
 
 public class IntakeWithAgitator extends Command {
 
-    private final Agitator m_agitator;
-    private final Intake m_intake;
-    private final Arm m_arm;
-    private final double m_wheelspeed;
-    private final double m_end;
-    private final Timer m_timer;
-
-    public IntakeWithAgitator(Agitator agitator, Intake intake, Arm arm, double wheelspeed, double end) {
-        m_agitator = agitator;
-        m_intake = intake;
-        m_arm = arm;
-        m_wheelspeed = wheelspeed;
-        m_end = end;
-        m_timer = new Timer();
+    private final Agitator agitator;
+    private final Intake intake;
+    private final double wheelspeed;
+    private final double end;
+    private final Timer timer;
+    public IntakeWithAgitator(Agitator agitator, Intake intake, double wheelspeed, double end) {
+        this.agitator = agitator;
+        this.intake = intake;
+        this.wheelspeed = wheelspeed;
+        this.end = end;
+        this.timer = new Timer();
         addRequirements(agitator, intake);
     }
 
     public void initialize() {
-        m_timer.start();
-        m_arm.moveArmToPosition(140);
+        timer.start();
     }
 
     @Override
     public void execute() {
-        m_intake.runIntake(m_wheelspeed);
-        m_agitator.setAgitatorSpeed(-0.5*m_wheelspeed);
+        intake.runIntake(wheelspeed);
+        agitator.setAgitatorSpeed(0.5 * wheelspeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_agitator.stopAgitator();
-        m_intake.stopIntake();
+        agitator.stopAgitator();
+        intake.stopIntake();
     }
 
     @Override
     public boolean isFinished() {
-        return m_timer.hasElapsed(m_end);
+        return timer.hasElapsed(end);
     }
 }

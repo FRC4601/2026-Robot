@@ -10,39 +10,36 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.Constants.IntakeConstants;
 
+
+// Intakes balls from the floor into the hopper/agitator
+
 public class Intake extends SubsystemBase {
 
+  // Initializing the motor
   private final SparkMax intakeMotor;
   private final SparkMaxConfig intakeConfig;
   
+  // The constructor--configures the motor
   public Intake() {
 
     intakeMotor = new SparkMax(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
-
     intakeConfig = new SparkMaxConfig();
-
-
-
     intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
   }
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+  public void periodic() {}
 
   public void runIntake(double speed) {
+    // The motor was mounted backwards so we have to invert the speed
     intakeMotor.set(-speed);
-    // might have to make this negative depending on how the motors are placed
   }
 
   public void stopIntake() {
     intakeMotor.set(0);
   }
 
-  //public void updateDashboard() {}
-  // ^ might create this in the future if we add more stuff, but as of now, we don't need it
-  
+  public void updateDashboard() {}
 
 }

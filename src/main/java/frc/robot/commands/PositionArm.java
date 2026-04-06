@@ -26,6 +26,8 @@ public class PositionArm extends Command {
     @Override
     public void initialize() {
         hopper.openHopper(); // Opens the hopper to allow the arm to extend
+        armTimer.reset();
+        armTimer.start();
     }
 
     @Override

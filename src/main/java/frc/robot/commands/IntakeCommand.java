@@ -10,21 +10,21 @@ public class IntakeCommand extends Command {
 
     private final Intake intake;
     private final double end;
-    private final Timer timer;
+    private final Timer intakeTimer;
 
     public IntakeCommand(Intake intake, double end) {
         this.intake = intake;
         this.end = end;
-        this.timer = new Timer();
+        this.intakeTimer = new Timer();
     }
     
     @Override
     public void execute() {
-            intake.runIntake(1);
+        intake.runIntake(1);
     }
 
     public boolean isFinished() {
-        return timer.hasElapsed(end);
+        return intakeTimer.hasElapsed(end);
     }
 
     @Override

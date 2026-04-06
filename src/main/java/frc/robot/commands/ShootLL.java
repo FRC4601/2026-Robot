@@ -13,7 +13,6 @@ public class ShootLL extends Command {
     private final Shooter shooter;
     private final Stager stager;    
     //private final CommandSwerveDrivetrain drivetrain;
-    private final Arm arm;
     private final Vision vision;
 
     private final double end;
@@ -22,14 +21,13 @@ public class ShootLL extends Command {
     public final Timer shootTimer;
     // Speed for stager and agitator when feeding balls into the shooter, can be tuned
 
-    public ShootLL(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain, Arm arm,
+    public ShootLL(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,
                     Vision vision, double end, double wheelspeed) {
 
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
         //this.drivetrain = drivetrain;
-        this.arm = arm;
         this.vision = vision;
 
         this.end = end;
@@ -37,7 +35,7 @@ public class ShootLL extends Command {
         this.oscillatingTimer = new Timer();
         this.shootTimer = new Timer();
 
-        addRequirements(agitator, shooter, stager, arm, vision); 
+        addRequirements(agitator, shooter, stager, vision); 
     
     }
     @Override
@@ -51,7 +49,7 @@ public class ShootLL extends Command {
         shootTimer.reset();
         shootTimer.start();
 
-        arm.moveArmToPosition(90);
+        //arm.moveArmToPosition(90);
 
     }
 
@@ -64,10 +62,17 @@ public void execute() {
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret*/
 
         double distance = vision.getTy();
-        shooter.setVelocityFromDistance(distance);
+
+
+        if (shootTimer.get() % 5 < 1.5) {
+            agitator.setAgitatorSpeed(-wheelspeed);
+        } else {
+            agitator.setAgitatorSpeed(wheelspeed);
+            shooter.setVelocityFromDistance(distance);
+            stager.setStagerSpeed(wheelspeed);
+        }
+
         
-        stager.setStagerSpeed(wheelspeed);
-        agitator.setAgitatorSpeed(wheelspeed);
         
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
@@ -86,7 +91,7 @@ public void execute() {
         shooter.stopShooter();
         stager.stopStager();
         agitator.stopAgitator();
-        arm.moveArmToPosition(80);
+        //arm.moveArmToPosition(80);
     }
 
 }

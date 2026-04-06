@@ -33,10 +33,10 @@ public class AimLL extends Command {
     private final Shooter shooter;
     private final Vision vision;
     private final Arm arm;
-    private final Timer timer;
+    private final Timer aimTimer;
     private final int start_ms;
     private final double end;
-    private final Timer shootTimer;
+    
 
 
 
@@ -49,9 +49,10 @@ public class AimLL extends Command {
         this.arm = arm;
         this.start_ms = start;
         this.end = end;
+        aimTimer = new Timer();
     
-        this.timer = new Timer();
-        this.shootTimer = new Timer();
+        
+        
 
         addRequirements(turret, shooter); // Declare subsystem dependencies
     
@@ -63,10 +64,10 @@ public void initialize() {
         
         //arm.startOscillate();
 
-        timer.reset();
-        timer.start();
+        aimTimer.reset();
+        aimTimer.start();
 
-        shootTimer.start();
+       
 
 
     //arm.moveArmToPosition(90);
@@ -120,14 +121,14 @@ public void execute() {
         }
 
     public boolean isFinished() {
-        return turret.isAligned(vision.getTx());
+        return aimTimer.hasElapsed(end);
     }
     
     public void updateDashboard() {
 
         SmartDashboard.putBoolean("Ready To Shoot", isReadyToShoot());
         SmartDashboard.putBoolean("Turret Aligned ", turret.isAligned(vision.getTx()));    
-        SmartDashboard.putNumber("Timer", shootTimer.get());
+        SmartDashboard.putNumber("Timer", aimTimer.get());
 
     }   
 

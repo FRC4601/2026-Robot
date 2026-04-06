@@ -9,7 +9,7 @@ public final class Constants {
     public static final double tolerance = 0.0; // Tolerance in rotations for arm position
     public static final double kd = 0; 
     public static final double ki = 0;
-    public static final double kp = .015; // PID Values for the arm position controller. 
+    public static final double kp = .017; // PID Values for the arm position controller. 
     public static final double ks = 0;
     public static final double kg = .02;
     public static final double kv = 0;
@@ -20,7 +20,7 @@ public final class Constants {
     public static final double ARM_GEAR_RATIO = 0; // may use if we need to convert from motor rotations to arm angle in degrees
     public static final int ARM_ABSOLUTE_ENCODER_PORT = 4; // needs to be set when absolute encoder is added
 
-    public static final double POSITION_A_DEGREES = 90; // needs to be set through testing  
+    public static final double POSITION_A_DEGREES = 70; // needs to be set through testing  
     public static final double POSITION_B_DEGREES = 40;
   
   }
@@ -56,7 +56,7 @@ public final class Constants {
 
 
   public static class PneumaticsConstants {
-    public static final int HOPPER_FORWARD_ID = 10 ;
+    public static final int HOPPER_FORWARD_ID = 10;
     public static final int HOPPER_REVERSE_ID = 11;
 
   }
@@ -68,9 +68,5 @@ public final class Constants {
   public static class CANRangeConstants {
     public static final int CAN_RANGE_ID = 26; // needs to be set when CANrange is added
   }
-
-
-
-
 
 }

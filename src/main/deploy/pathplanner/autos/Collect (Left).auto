@@ -11,13 +11,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Right Shoot Back"
+                  "pathName": "Collect Left"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeRight"
+                  "name": "IntakeLeft"
                 }
               }
             ]
@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootBack"
+            "name": "ShootButGoodButGooder"
           }
         }
       ]

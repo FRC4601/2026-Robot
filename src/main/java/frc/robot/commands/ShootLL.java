@@ -33,9 +33,11 @@ public class ShootLL extends Command {
     private final double rpm;
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
+    private final double end;
     private final Timer oscillatingTimer;
     private final double feedspeed; 
     private final Vision vision;
+    public final Timer shootTimer;
     // Speed for stager and agitator when feeding balls into the shooter, can be tuned
 
 
@@ -54,8 +56,10 @@ public class ShootLL extends Command {
         this.feedspeed = feedspeed;
         this.drivetrain = drivetrain;
         this.arm = arm;
+        this.end = end;
         this.vision = vision;
         this.oscillatingTimer = new Timer();
+        this.shootTimer = new Timer();
         addRequirements(agitator, shooter, stager); 
 
         // Declare subsystem dependencies
@@ -66,11 +70,12 @@ public class ShootLL extends Command {
 public void initialize() {
 
     agitator.startTimer();
-    arm.startOscillate();
+    //arm.startOscillate();
     oscillatingTimer.reset();
     oscillatingTimer.start();
 
-
+    shootTimer.reset();
+    shootTimer.start();
 
      arm.moveArmToPosition(90);
 
@@ -94,9 +99,9 @@ public void execute() {
         
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
-        if (oscillatingTimer.hasElapsed(1)){
+        /*if (oscillatingTimer.hasElapsed(1)){
             arm.oscillate();
-        }
+        }*/
          // Move the arm back and forth while shooting to help with feeding
 
 
@@ -105,7 +110,7 @@ public void execute() {
     }
 
     public boolean isFinished() {
-        return false;
+        return shootTimer.hasElapsed(end);
     }
 
     public void end(boolean interrupted) {

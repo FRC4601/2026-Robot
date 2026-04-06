@@ -7,6 +7,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj.Timer; 
+import frc.robot.Constants.AgitatorConstants;
+import frc.robot.Constants.StagerConstants;
 
 
 /**
@@ -31,6 +33,7 @@ public class Shoot extends Command {
     private final Shooter shooter;
     private final Stager stager;    
     private final double rpm;
+    // should rpm be a double? i think just in case but idrk. not that deep.
     private final CommandSwerveDrivetrain drivetrain;
     private final Arm arm;
     private final Timer oscillatingTimer;
@@ -48,7 +51,6 @@ public class Shoot extends Command {
         this.shooter = shooter;
         this.stager = stager;
         this.rpm = rpm;
-        this.feedspeed = feedspeed;
         this.drivetrain = drivetrain;
         this.arm = arm;
         oscillatingTimer = new Timer();
@@ -76,11 +78,11 @@ public void execute() {
         double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret
 
+        // if we give it an rpm it can't reach, what will happen?
+        // it'll probably just max out at the closest possible rpm, but we should maybe test just in case
         shooter.setVelocity(rpm);
-        
-        stager.setStagerSpeed(-feedspeed);
-        agitator.setAgitatorSpeed(-feedspeed);
-        
+        stager.setStagerSpeed(-StagerConstants.STAGER_SPEED);
+        agitator.setAgitatorSpeed(-AgitatorConstants.AGITATOR_SPEED);
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
         /*if (oscillatingTimer.hasElapsed(3)){

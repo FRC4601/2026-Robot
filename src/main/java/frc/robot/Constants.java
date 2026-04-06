@@ -26,25 +26,27 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int INTAKE_MOTOR_ID = 23; // needs to be set when intake motor added
+    public static final int INTAKE_MOTOR_ID = 23;
   }
 
   public static class AgitatorConstants {
     public static final int AGITATOR_MOTOR_ID = 22;
     public static final double FEED_SPEED = 1;
+    public static final double AGITATOR_SPEED = 0.75; // needs to be set through testing
   }
 
   public static class StagerConstants {
     public static final int STAGER_MOTOR_ID = 24;
+    public static final double STAGER_SPEED = 0.7; // needs to be set through testing
   }
 
   public static class ShooterConstants {
-    public static final int SHOOTER_MOTOR_ID_1 = 19; // needs to be set when shooter motor 1 added
-    public static final int SHOOTER_MOTOR_ID_2 = 20; // needs to be set when shooter motor 2 added
+    public static final int SHOOTER_MOTOR_ID_1 = 19;
+    public static final int SHOOTER_MOTOR_ID_2 = 20;
   }
 
  public static class TurretConstants {
-    public static final int TURRET_MOTOR_ID = 21; // needs to be set when turret motor added
+    public static final int TURRET_MOTOR_ID = 21;
     public static final double kd = 0;
     public static final double ki = 0;
     public static final double kp = 0.005; // PID Values for the turret position controller. These will need to be tuned.
@@ -66,9 +68,5 @@ public final class Constants {
   public static class CANRangeConstants {
     public static final int CAN_RANGE_ID = 26; // needs to be set when CANrange is added
   }
-
-
-
-
 
 }

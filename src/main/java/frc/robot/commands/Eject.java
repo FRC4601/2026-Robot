@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.Timer;
 
 // Ejects fuel out through the intake arm
 
-public class IntakeWithAgitator extends Command {
+public class Eject extends Command {
 
     private final Agitator agitator;
     private final Intake intake;
     private final double wheelspeed;
     private final double end;
     private final Timer timer;
-    public IntakeWithAgitator(Agitator agitator, Intake intake, double wheelspeed, double end) {
+    public Eject(Agitator agitator, Intake intake, double wheelspeed, double end) {
         this.agitator = agitator;
         this.intake = intake;
         this.wheelspeed = wheelspeed;

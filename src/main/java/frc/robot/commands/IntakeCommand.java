@@ -17,6 +17,11 @@ public class IntakeCommand extends Command {
         this.end = end;
         this.intakeTimer = new Timer();
     }
+
+    public void initialize() {
+        intakeTimer.reset();
+        intakeTimer.start();
+    }
     
     @Override
     public void execute() {

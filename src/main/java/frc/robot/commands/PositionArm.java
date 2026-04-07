@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.wpilibj.Timer;
+import java.lang.Math;
 
 
 public class PositionArm extends Command {
@@ -37,8 +38,8 @@ public class PositionArm extends Command {
 
     @Override
     public boolean isFinished() {
-        // Check if the arm has reached the target position within a certain tolerance (we gave up, but maybe later)
-        return armTimer.hasElapsed(end);
+        return (armTimer.hasElapsed(end))
+                    || (Math.abs(arm.ArmPosition() - targetPosition) <= 1);
     }
 
 }

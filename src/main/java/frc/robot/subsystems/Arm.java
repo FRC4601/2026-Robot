@@ -41,7 +41,7 @@ public class Arm extends SubsystemBase {
     armConfig = new SparkMaxConfig();
     armConfig.idleMode(IdleMode.kBrake);
     armMotor.configure(armConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT); // Need encoder port here
+    absoluteEncoder = new DutyCycleEncoder(ArmConstants.ARM_ABSOLUTE_ENCODER_PORT);
 
     armPIDController = new PIDController(ArmConstants.kp, ArmConstants.ki, ArmConstants.kd);
     armPIDController.setTolerance(ArmConstants.tolerance);
@@ -80,11 +80,10 @@ public class Arm extends SubsystemBase {
     double output = armPIDController.calculate(currentPosition, targetPosition);
     output = MathUtil.clamp(output, -0.25, 0.25); //limit to half power at most to prevent violent movements. Adjust as necessary.
     
-    if (output > 0 && currentPosition >= ArmConstants.ARM_EXTENDED_POSITION) {
-      
-      output = 0; // Prevent moving beyond the extended position
-    } else if (output < 0 && currentPosition < ArmConstants.ARM_RETRACTED_POSITION) {
-      output = 0; // Prevent moving beyond the retracted position                                   
+    // Prevent moving beyond the extended position
+    if ((output > 0 && currentPosition >= ArmConstants.ARM_EXTENDED_POSITION) 
+            || (output < 0 && currentPosition <= ArmConstants.ARM_RETRACTED_POSITION)) {
+      output = 0;
     }
        
     setArmSpeed(output);

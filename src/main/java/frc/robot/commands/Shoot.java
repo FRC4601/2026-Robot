@@ -33,7 +33,7 @@ public class Shoot extends Command {
         oscillatingTimer = new Timer();
         shootTimer = new Timer();
 
-        addRequirements(agitator, shooter, stager, arm); // Declare subsystem dependencies
+        addRequirements(agitator, shooter, stager); // Declare subsystem dependencies
     
     }
 
@@ -48,16 +48,22 @@ public class Shoot extends Command {
         shootTimer.reset();
         shootTimer.start();
 
-        arm.moveArmToPosition(90);
+        //arm.moveArmToPosition(90);
 
     }
 
     @Override
     public void execute() {
-
-        shooter.setVelocity(rpm);
-        stager.setStagerSpeed(wheelspeed);
-        agitator.setAgitatorSpeed(wheelspeed);
+        
+        // We had code to automatically unjam it for 1.5 seconds every 5 seconds,
+        // but our shooter got better so we don't need it anymore!
+        /*if (shootTimer.get() % 5 < 1.5) {
+            agitator.setAgitatorSpeed(-wheelspeed);
+        } else {*/
+            agitator.setAgitatorSpeed(wheelspeed);
+            shooter.setVelocity(rpm);
+            stager.setStagerSpeed(0.65*wheelspeed);
+        //}
     
         // moves arm back and forth to help with feeding
         /*if (oscillatingTimer.hasElapsed(3)){
@@ -74,7 +80,7 @@ public class Shoot extends Command {
         shooter.stopShooter();
         stager.stopStager();
         agitator.stopAgitator();
-        arm.moveArmToPosition(80);
+        //arm.moveArmToPosition(80);
     }
 
 }

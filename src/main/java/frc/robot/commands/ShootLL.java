@@ -63,14 +63,15 @@ public void execute() {
 
         double distance = vision.getTy();
 
-
-        if (shootTimer.get() % 5 < 1.5) {
+        // We had code to automatically unjam it for 1.5 seconds every 5 seconds,
+        // but our shooter got better so we don't need it anymore!
+        /*if (shootTimer.get() % 5 < 1.5) {
             agitator.setAgitatorSpeed(-wheelspeed);
-        } else {
+        } else {*/
             agitator.setAgitatorSpeed(wheelspeed);
             shooter.setVelocityFromDistance(distance);
-            stager.setStagerSpeed(wheelspeed);
-        }
+            stager.setStagerSpeed(0.5*wheelspeed);
+        //}
 
         
         

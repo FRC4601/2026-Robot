@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.*;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -63,12 +62,12 @@ public class RobotContainer {
         // Since we only want the april tags on the hub, we ignore the rest
     
 
-    // Everything here is used for autos
+    // Everything here is used for autos in the PathPlanner app
     public RobotContainer() {
 
         NamedCommands.registerCommand("IntakeLeft", 
-            new SequentialCommandGroup(
-                new WaitCommand(1.1),
+            Commands.sequence(
+                Commands.waitSeconds(1.1),
                 new PositionArm(arm, hopper, 140, 1),
                 new IntakeCommand(intake, 2.3)
             )
@@ -77,28 +76,28 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeRight",
             Commands.sequence(
                 Commands.waitSeconds(1.1),
-                //new PositionArm(arm, hopper, 140, 1),
+                new PositionArm(arm, hopper, 140, 1),
                 new IntakeCommand(intake, 2.3) // maybe change the time?
             )
         );
 
         NamedCommands.registerCommand("OutpostIntake",
-            new SequentialCommandGroup(
+            Commands.sequence(
                 new PositionArm(arm, hopper, 140, 1),
                 new IntakeCommand(intake, 2.5)
             )
         );
 
         NamedCommands.registerCommand("ShootBackIntake",
-            new SequentialCommandGroup(
-                new WaitCommand(2.1),
+            Commands.sequence(
+                Commands.waitSeconds(2.1),
                 new PositionArm(arm, hopper, 140, 1),
                 new IntakeCommand(intake, 1.5)
             )
         );
 
         NamedCommands.registerCommand("ShootButGood",
-            new SequentialCommandGroup(
+            Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
                 new ShootLL(agitator, shooter, stager, drivetrain, vision, 8, 1)
             )
@@ -109,7 +108,7 @@ public class RobotContainer {
         );
 
         NamedCommands.registerCommand("ShootButGoodButGooder",
-            new SequentialCommandGroup(
+            Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
                 new Unjam(agitator, 1.25),
                 new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1),
@@ -183,12 +182,11 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        // eject fuel
-        joystick.rightBumper().whileTrue(new IntakeWithAgitator(agitator, intake, -1, 999));
+        // eject fuel & shoot VERY slowly (in the words of Brian, "poop it out")
+        joystick.rightBumper().whileTrue(new Eject(agitator, intake, -1, 999));
+        joystick.rightTrigger(0.5).whileTrue(new Shoot(agitator, shooter, stager, arm, 750, 0.5, 100));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-
-
 
         // Setting up the controls for the copilot
 
@@ -201,32 +199,28 @@ public class RobotContainer {
         xboxController.rightTrigger(.5).whileTrue(new AimLL(turret, shooter, vision, 100));
         xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter,stager, drivetrain, vision, 100, 1));
 
-        xboxController.leftBumper().whileTrue(new RunAgitator(agitator, 1, 999));
+        xboxController.leftBumper().whileTrue(new Unjam(agitator, 999));
         xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, 140, 999));
 
         // D-pad controls (all do the same thing lol)
-        xboxController.povRight().onTrue(new Unjam(agitator, 999));
-        xboxController.povUp().onTrue(new Unjam(agitator, 999));
-        xboxController.povLeft().onTrue(new Unjam(agitator, 999));
-        xboxController.povDown().onTrue(new Unjam(agitator, 999));
+        xboxController.povRight().whileTrue(new Unjam(agitator, 999));
+        xboxController.povUp().whileTrue(new Unjam(agitator, 999));
+        xboxController.povLeft().whileTrue(new Unjam(agitator, 999));
+        xboxController.povDown().whileTrue(new Unjam(agitator, 999));
 
         
         // Setting up the main driver's controls
 
-        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm)); // ***************************************8
+        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm));
         new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> turret.rotate(xboxController.getRightX() * 0.2), turret));
         arm.setDefaultCommand(Commands.run(() -> arm.setArmSpeed(0), arm));
         turret.setDefaultCommand(Commands.run(() -> turret.rotate(0), turret));
     }
-
-
 
     public Command getAutonomousCommand() {
         
          return autoChooser.getSelected();
 
     }
-
-
 
 }

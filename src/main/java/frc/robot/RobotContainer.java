@@ -75,9 +75,9 @@ public class RobotContainer {
         );
 
         NamedCommands.registerCommand("IntakeRight",
-            new SequentialCommandGroup(
-                new WaitCommand(1.1),
-                new PositionArm(arm, hopper, 140, 1),
+            Commands.sequence(
+                Commands.waitSeconds(1.1),
+                //new PositionArm(arm, hopper, 140, 1),
                 new IntakeCommand(intake, 2.3) // maybe change the time?
             )
         );
@@ -100,7 +100,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootButGood",
             new SequentialCommandGroup(
                 new AimLL(turret, shooter, vision, 1),
-                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 8, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, 8, 1)
             )
         );
 
@@ -112,11 +112,11 @@ public class RobotContainer {
             new SequentialCommandGroup(
                 new AimLL(turret, shooter, vision, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, arm, vision, 4.5, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1)
             )
         );
 
@@ -125,11 +125,15 @@ public class RobotContainer {
         );
 
         NamedCommands.registerCommand("OpenHopper",
-            new PositionArm(arm, hopper, 140, 2)
+            new PositionArm(arm, hopper, 140, 1)
+        );
+
+        NamedCommands.registerCommand("CloseHopperALittle",
+            new PositionArm(arm, hopper, 70, 1)
         );
 
         NamedCommands.registerCommand("RunAgitatorForOutpost",
-            new RunAgitator(agitator, 1, 5)
+            new RunAgitator(agitator, 0.3, 5)
         );
 
         drivetrain.configureAutoBuilder(); 
@@ -179,6 +183,8 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // eject fuel
+        joystick.rightBumper().whileTrue(new IntakeWithAgitator(agitator, intake, -1, 999));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -193,9 +199,9 @@ public class RobotContainer {
         xboxController.x().whileTrue(new IntakeCommand(intake, 999));
 
         xboxController.rightTrigger(.5).whileTrue(new AimLL(turret, shooter, vision, 100));
-        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter,stager, drivetrain, arm, vision, 100, 1));
+        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter,stager, drivetrain, vision, 100, 1));
 
-        xboxController.leftBumper().whileTrue(new Unjam(agitator, 999));
+        xboxController.leftBumper().whileTrue(new RunAgitator(agitator, 1, 999));
         xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, 140, 999));
 
         // D-pad controls (all do the same thing lol)
@@ -207,7 +213,7 @@ public class RobotContainer {
         
         // Setting up the main driver's controls
 
-        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm));
+        new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm)); // ***************************************8
         new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> turret.rotate(xboxController.getRightX() * 0.2), turret));
         arm.setDefaultCommand(Commands.run(() -> arm.setArmSpeed(0), arm));
         turret.setDefaultCommand(Commands.run(() -> turret.rotate(0), turret));

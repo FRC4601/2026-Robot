@@ -79,7 +79,7 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocityFromDistance(double distanceInches) {
     double rpm = interpolateRPM(distanceInches);
-    setVelocity(rpm);
+    setVelocity(rpm+500);
   }
 
   // Calculates the target RPM based on the distance
@@ -123,7 +123,7 @@ public class Shooter extends SubsystemBase {
 
   public void stopShooter(){
     leaderMotor.set(0);
-     targetRPM = 0.0;
+    targetRPM = 0.0;
   }
 
   public void runShooter(double speed){

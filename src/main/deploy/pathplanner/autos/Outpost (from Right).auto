@@ -31,6 +31,12 @@
         {
           "type": "named",
           "data": {
+            "name": "CloseHopperALittle"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootButGoodButGooder"
           }
         }

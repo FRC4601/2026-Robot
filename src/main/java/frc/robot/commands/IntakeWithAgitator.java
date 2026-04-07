@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.Timer; 
 
-// Abandoned. Runs the intake and agitator together
+// Ejects fuel out through the intake arm
 
 public class IntakeWithAgitator extends Command {
 
@@ -29,7 +29,7 @@ public class IntakeWithAgitator extends Command {
     @Override
     public void execute() {
         intake.runIntake(wheelspeed);
-        agitator.setAgitatorSpeed(0.5 * wheelspeed);
+        agitator.setAgitatorSpeed(wheelspeed);
     }
 
     @Override

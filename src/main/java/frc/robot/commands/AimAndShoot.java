@@ -33,7 +33,7 @@ public class AimAndShoot extends Command {
         this.angle = angle;
         timer = new Timer();
 
-        addRequirements(turret, shooter, arm, stager, agitator); // Declare subsystem dependencies 
+        addRequirements(turret, shooter, stager, agitator); // Declare subsystem dependencies 
     }
 
     @Override

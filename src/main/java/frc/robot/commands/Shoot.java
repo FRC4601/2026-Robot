@@ -2,6 +2,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
 import edu.wpi.first.wpilibj.Timer;
 
 
@@ -13,27 +14,34 @@ public class Shoot extends Command {
     private final Shooter shooter;
     private final Stager stager;  
     private final Arm arm;
+    private final CANRange canRange;
 
     private final double rpm;
     private final double wheelspeed;
     private final double end;
-    private final Timer oscillatingTimer;
+    //private final Timer oscillatingTimer;
     private final Timer shootTimer;
+    public final Timer canRangeTimer;
+    public boolean needToUnjam;
 
-    public Shoot(Agitator agitator, Shooter shooter, Stager stager, Arm arm, double rpm, double wheelspeed, double end) {
+    public Shoot(Agitator agitator, Shooter shooter, Stager stager, Arm arm, CANRange canRange,
+                        double rpm, double wheelspeed, double end) {
         
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
         this.arm = arm;
+        this.canRange = canRange;
 
         this.rpm = rpm;
         this.end = end;
         this.wheelspeed = wheelspeed;
-        oscillatingTimer = new Timer();
+        //oscillatingTimer = new Timer();
         shootTimer = new Timer();
+        canRangeTimer = new Timer();
+        needToUnjam = false;
 
-        addRequirements(agitator, shooter, stager); // Declare subsystem dependencies
+        addRequirements(agitator, shooter, stager, canRange); // Declare subsystem dependencies
     
     }
 
@@ -43,10 +51,12 @@ public class Shoot extends Command {
         agitator.startTimer();
         arm.startOscillate();
 
-        oscillatingTimer.reset();
-        oscillatingTimer.start();
+        //oscillatingTimer.reset();
+        //oscillatingTimer.start();
         shootTimer.reset();
         shootTimer.start();
+        canRangeTimer.reset();
+        canRangeTimer.start();
 
         //arm.moveArmToPosition(90);
 
@@ -59,16 +69,44 @@ public class Shoot extends Command {
         // but our shooter got better so we don't need it anymore!
         /*if (shootTimer.get() % 5 < 1.5) {
             agitator.setAgitatorSpeed(-wheelspeed);
-        } else {*/
+        } else {
             agitator.setAgitatorSpeed(wheelspeed);
             shooter.setVelocity(rpm);
             stager.setStagerSpeed(0.65*wheelspeed);
-        //}
+        }*/
     
         // moves arm back and forth to help with feeding
         /*if (oscillatingTimer.hasElapsed(3)){
             arm.oscillate();
         }*/
+
+        /*if (canRange.detectsFuel()) {
+            needToUnjam = false;
+            canRangeTimer.reset();
+            canRangeTimer.start();
+        } else if ((canRangeTimer.hasElapsed(CANRangeConstants.LONG_TIME)) && needToUnjam == false) {
+            needToUnjam = true;
+            canRangeTimer.reset();
+            canRangeTimer.start();
+        } else if ((canRangeTimer.hasElapsed(CANRangeConstants.UNJAM_TIME)) && needToUnjam == true) {
+            needToUnjam = false;
+            canRangeTimer.reset();
+            canRangeTimer.start();
+        }
+
+        if (needToUnjam) {
+            agitator.setAgitatorSpeed(-wheelspeed);
+        } else {
+            agitator.setAgitatorSpeed(wheelspeed);
+            shooter.setVelocity(rpm);
+            stager.setStagerSpeed(0.65*wheelspeed);
+        }*/
+
+        shooter.setVelocity(rpm);
+        if (shootTimer.hasElapsed(0.5)) {
+            agitator.setAgitatorSpeed(wheelspeed);
+            stager.setStagerSpeed(0.65*wheelspeed);
+        }
 
     }
 

@@ -11,13 +11,15 @@ public class PositionArm extends Command {
 
     private final Arm arm;
     private final Hopper hopper;
+    private final Intake intake;
     private final double targetPosition;
     private final Timer armTimer;
     private final double end;
 
-    public PositionArm(Arm arm, Hopper hopper, double targetPosition, double end) {
+    public PositionArm(Arm arm, Hopper hopper, Intake intake, double targetPosition, double end) {
         this.arm = arm;
         this.hopper = hopper;
+        this.intake = intake;
         this.targetPosition = targetPosition;
         this.end = end;
         armTimer = new Timer();
@@ -34,12 +36,17 @@ public class PositionArm extends Command {
     @Override
     public void execute() {
         arm.moveArmToPosition(targetPosition);
+        if (!armTimer.hasElapsed(1.0)) {
+            intake.runIntake(0.5);
+        } else {
+            intake.stopIntake();
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return (armTimer.hasElapsed(end))
-                    || (Math.abs(arm.ArmPosition() - targetPosition) <= 1);
+        return (armTimer.hasElapsed(end));
+                    // || (Math.abs(arm.ArmPosition() - targetPosition) <= 1);
     }
 
 }

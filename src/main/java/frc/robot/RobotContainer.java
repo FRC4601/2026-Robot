@@ -53,6 +53,7 @@ public class RobotContainer {
     public final Arm arm = new Arm();
     public final Intake intake = new Intake();
     public final Hopper hopper = new Hopper();
+    public final CANRange canRange = new CANRange();
 
 
     //private final AimLL aimLL = new AimLL(turret, shooter, vision, arm, 0, 100);
@@ -63,12 +64,13 @@ public class RobotContainer {
     
 
     // Everything here is used for autos in the PathPlanner app
+    // FIGURE OUT WHERE THE SHOOTING DEAD ZONES ARE!!
     public RobotContainer() {
 
         NamedCommands.registerCommand("IntakeLeft", 
             Commands.sequence(
                 Commands.waitSeconds(1.1),
-                new PositionArm(arm, hopper, 140, 1),
+                new PositionArm(arm, hopper, intake, 140, 1),
                 new IntakeCommand(intake, 2.3)
             )
         );
@@ -76,14 +78,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeRight",
             Commands.sequence(
                 Commands.waitSeconds(1.1),
-                new PositionArm(arm, hopper, 140, 1),
+                new PositionArm(arm, hopper, intake, 140, 1),
                 new IntakeCommand(intake, 2.3) // maybe change the time?
             )
         );
 
         NamedCommands.registerCommand("OutpostIntake",
             Commands.sequence(
-                new PositionArm(arm, hopper, 140, 1),
+                new PositionArm(arm, hopper, intake, 140, 1),
                 new IntakeCommand(intake, 2.5)
             )
         );
@@ -91,7 +93,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootBackIntake",
             Commands.sequence(
                 Commands.waitSeconds(2.1),
-                new PositionArm(arm, hopper, 140, 1),
+                new PositionArm(arm, hopper, intake, 140, 1),
                 new IntakeCommand(intake, 1.5)
             )
         );
@@ -99,23 +101,23 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootButGood",
             Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, 8, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 8, 1)
             )
         );
 
         NamedCommands.registerCommand("ShootBack",
-            new Shoot(agitator, shooter, stager, arm, 4500, 1, 10)
+            new Shoot(agitator, shooter, stager, arm, canRange, 4500, 1, 10)
         );
 
         NamedCommands.registerCommand("ShootButGoodButGooder",
             Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
                 new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, 4.5, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1)
             )
         );
 
@@ -124,11 +126,11 @@ public class RobotContainer {
         );
 
         NamedCommands.registerCommand("OpenHopper",
-            new PositionArm(arm, hopper, 140, 1)
+            new PositionArm(arm, hopper, intake, 140, 1)
         );
 
         NamedCommands.registerCommand("CloseHopperALittle",
-            new PositionArm(arm, hopper, 70, 1)
+            new PositionArm(arm, hopper, intake, 70, 1)
         );
 
         NamedCommands.registerCommand("RunAgitatorForOutpost",
@@ -182,25 +184,24 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        // eject fuel & shoot VERY slowly (in the words of Brian, "poop it out")
-        joystick.rightBumper().whileTrue(new Eject(agitator, intake, -1, 999));
-        joystick.rightTrigger(0.5).whileTrue(new Shoot(agitator, shooter, stager, arm, 750, 0.5, 100));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Setting up the controls for the copilot
 
-        xboxController.y().whileTrue(new Shoot(agitator, shooter,stager, arm, 5500, 1, 100));
-        xboxController.b().whileTrue(new Shoot(agitator, shooter,stager, arm, 4500, 1, 100));
-        xboxController.a().whileTrue(new Shoot(agitator, shooter,stager, arm, 3500, 1, 100));
+
+        xboxController.y().whileTrue(new Shoot(agitator, shooter,stager, arm, canRange, 5500, 1, 100));
+        xboxController.b().whileTrue(new Shoot(agitator, shooter,stager, arm, canRange, 4500, 1, 100));
+        xboxController.a().whileTrue(new Shoot(agitator, shooter,stager, arm, canRange, 3500, 1, 100));
 
         xboxController.x().whileTrue(new IntakeCommand(intake, 999));
 
-        xboxController.rightTrigger(.5).whileTrue(new AimLL(turret, shooter, vision, 100));
-        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter,stager, drivetrain, vision, 100, 1));
-
-        xboxController.leftBumper().whileTrue(new Unjam(agitator, 999));
-        xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, 140, 999));
+        xboxController.rightTrigger(0.5).whileTrue(new AimLL(turret, shooter, vision, 100));
+        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 100, 1));
+        
+        // potentially make a seperate auto/teleop command
+        xboxController.leftBumper().onTrue(new PositionArm(arm, hopper, intake, 5, 999));
+        xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, intake, 140, 999));
 
         // D-pad controls (all do the same thing lol)
         xboxController.povRight().whileTrue(new Unjam(agitator, 999));
@@ -208,9 +209,13 @@ public class RobotContainer {
         xboxController.povLeft().whileTrue(new Unjam(agitator, 999));
         xboxController.povDown().whileTrue(new Unjam(agitator, 999));
 
+
         
         // Setting up the main driver's controls
 
+        // on intitialize for the manual arm movement, disable the PID.
+        // on end for the manual arm movement, enable the PID.
+        // in the arm subsystem's period, have a boolean like shouldUsePID and if it's true then calculate the PID thing!
         new Trigger(() -> Math.abs(xboxController.getLeftY()) > 0.1).whileTrue(Commands.run(() -> arm.setArmSpeed(xboxController.getLeftY() * 0.2), arm));
         new Trigger(() -> Math.abs(xboxController.getRightX()) > 0.1).whileTrue(Commands.run(() -> turret.rotate(xboxController.getRightX() * 0.2), turret));
         arm.setDefaultCommand(Commands.run(() -> arm.setArmSpeed(0), arm));

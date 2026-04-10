@@ -12,18 +12,19 @@ public class Eject extends Command {
     private final Intake intake;
     private final double wheelspeed;
     private final double end;
-    private final Timer timer;
+    private final Timer ejectTimer;
+
     public Eject(Agitator agitator, Intake intake, double wheelspeed, double end) {
         this.agitator = agitator;
         this.intake = intake;
         this.wheelspeed = wheelspeed;
         this.end = end;
-        this.timer = new Timer();
+        this.ejectTimer = new Timer();
         addRequirements(agitator, intake);
     }
 
     public void initialize() {
-        timer.start();
+        ejectTimer.start();
     }
 
     @Override
@@ -40,6 +41,6 @@ public class Eject extends Command {
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(end);
+        return ejectTimer.hasElapsed(end);
     }
 }

@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
     // Velocity PID — slot 0
     leaderConfig.Slot0.kP = 0.2; // Placeholder values — these will need to be tuned
     leaderConfig.Slot0.kI = 0;
-    leaderConfig.Slot0.kD = 0;
+    leaderConfig.Slot0.kD = 0; // about 0.001?
     leaderConfig.Slot0.kV = 0.12; // Velocity feedforward term — also needs tuning
 
     // Setting the follower motor to copy the leader motor

@@ -75,6 +75,9 @@ public final class Constants {
 
   public static class CANRangeConstants {
     public static final int CAN_RANGE_ID = 26; // needs to be set when CANrange is added
+    public static final double DISTANCE = 0.06;
+    public static final double LONG_TIME = 2.5; // tune?
+    public static final double UNJAM_TIME = 1.5;
   }
 
 }

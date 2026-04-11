@@ -34,11 +34,11 @@ public class Shooter extends SubsystemBase {
   // Raw data that allows us to calculate the rpm needed to shoot from a given distance
   static {
     // Key: distance in inches, Value: corresponding shooter RPM
-    DISTANCE_TO_RPM.put(40.0, 3950.0); // fabricated to help with closer distances
-    DISTANCE_TO_RPM.put(83.0,  4500.0);
-    DISTANCE_TO_RPM.put(111.0,  5000.0);
-    DISTANCE_TO_RPM.put(155.0,  5500.0);
-    DISTANCE_TO_RPM.put(206.6, 6000.0); // fabricated to help with farther distances
+    DISTANCE_TO_RPM.put(40.0, 3400.0); // fabricated to help with closer distances
+    DISTANCE_TO_RPM.put(83.0,  4100.0);
+    DISTANCE_TO_RPM.put(111.0,  4500.0);
+    DISTANCE_TO_RPM.put(155.0,  4800.0);
+    DISTANCE_TO_RPM.put(206.6, 5300.0);// fabricated to help with farther distances
   }
 
   // Current RPM setpoint
@@ -79,7 +79,7 @@ public class Shooter extends SubsystemBase {
 
   public void setVelocityFromDistance(double distanceInches) {
     double rpm = interpolateRPM(distanceInches);
-    setVelocity(rpm+500);
+    setVelocity(rpm-300);
   }
 
   // Calculates the target RPM based on the distance
@@ -104,7 +104,7 @@ public class Shooter extends SubsystemBase {
 
 
 
-  public static double tyToDistance(double ty) {
+  public double tyToDistance(double ty) {
     final double CAMERA_HEIGHT_INCHES = 22.0;    // Height of limelight lens from floor
     final double TARGET_HEIGHT_INCHES = 44.25;    // Height of April Tag center from floor
     final double CAMERA_MOUNT_ANGLE_DEGREES = 5.0; // Upward tilt of limelight on robot

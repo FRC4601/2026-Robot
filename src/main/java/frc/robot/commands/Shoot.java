@@ -80,30 +80,30 @@ public class Shoot extends Command {
             arm.oscillate();
         }*/
 
-        if (canRange.detectsFuel()) {
-            needToUnjam = false;
-            canRangeTimer.reset();
-            canRangeTimer.start();
-        } else if (needToUnjam == false && canRangeTimer.hasElapsed(CANRangeConstants.LONG_TIME)) {
-            needToUnjam = true;
-            canRangeTimer.reset();
-            canRangeTimer.start();
-        } else if (needToUnjam == true && canRangeTimer.hasElapsed(CANRangeConstants.UNJAM_TIME)) {
-            needToUnjam = false;
-            canRangeTimer.reset();
-            canRangeTimer.start();
-        }
+       // if (canRange.detectsFuel()) {
+           // needToUnjam = false;
+           // canRangeTimer.reset();
+           // canRangeTimer.start();
+       // } else if (needToUnjam == false && canRangeTimer.hasElapsed(CANRangeConstants.LONG_TIME)) {
+            //needToUnjam = true;
+           // canRangeTimer.reset();
+           // canRangeTimer.start();
+        //} else if (needToUnjam == true && canRangeTimer.hasElapsed(CANRangeConstants.UNJAM_TIME)) {
+          //  needToUnjam = false;
+          //  canRangeTimer.reset();
+          //  canRangeTimer.start();
+       // }
 
-        if (needToUnjam) {
-            agitator.setAgitatorSpeed(-wheelspeed);
-            stager.stopStager();
-        } else {
+       // if (needToUnjam) {
+        //    agitator.setAgitatorSpeed(-wheelspeed);
+        //    stager.stopStager();
+       // } else {
             if (shootTimer.hasElapsed(0.5)) {
                 agitator.setAgitatorSpeed(wheelspeed);
                 stager.setStagerSpeed(0.65*wheelspeed);
             }
             shooter.setVelocity(rpm);
-        }
+       // }
         
 
     }

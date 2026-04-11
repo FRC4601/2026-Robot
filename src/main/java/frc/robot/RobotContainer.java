@@ -112,11 +112,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootButGoodButGooder",
             Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
-                new Unjam(agitator, 1.25),
+                //new Unjam(agitator, 1.25),
                 new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
-                new Unjam(agitator, 1.25),
+                //new Unjam(agitator, 1.25),
                 new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
-                new Unjam(agitator, 1.25),
+                //new Unjam(agitator, 1.25),
                 new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1)
             )
         );

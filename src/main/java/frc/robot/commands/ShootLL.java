@@ -59,6 +59,8 @@ public class ShootLL extends Command {
         canRangeTimer.start();
 
         //arm.moveArmToPosition(90);
+
+        
     }
 
 @Override
@@ -69,7 +71,19 @@ public void execute() {
         double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret*/
 
-        double distance = vision.getTy();
+        
+        if (!vision.hasTarget()) {
+            // If you can't find a target, do nothing
+            return;
+        } else{
+
+        double ty = vision.getTy();
+        double distance = shooter.tyToDistance(ty);
+
+            agitator.setAgitatorSpeed(wheelspeed);
+            shooter.setVelocityFromDistance(distance);
+            stager.setStagerSpeed(0.65*wheelspeed);
+        }
 
         // We had code to automatically unjam it for 1.5 seconds every 5 seconds,
         // but our shooter got better so we don't need it anymore!
@@ -82,24 +96,26 @@ public void execute() {
         }*/
 
         // this logic feels unnecessarily complex... but it works (i think)
-        if (canRange.detectsFuel()) {
-            needToUnjam = false;
-            canRangeTimer.reset();
-        } else if ((canRangeTimer.get() > CANRangeConstants.LONG_TIME) && needToUnjam == false) {
-            needToUnjam = true;
-            canRangeTimer.reset();
-        } else if ((canRangeTimer.get() > CANRangeConstants.UNJAM_TIME) && needToUnjam == true) {
-            needToUnjam = false;
-            canRangeTimer.reset();
-        }
 
-        if (needToUnjam) {
-            agitator.setAgitatorSpeed(-wheelspeed);
-        } else {
-            agitator.setAgitatorSpeed(wheelspeed);
-            shooter.setVelocityFromDistance(distance);
-            stager.setStagerSpeed(0.65*wheelspeed);
-        }
+        
+        //if (canRange.detectsFuel()) {
+           // needToUnjam = false;
+           // canRangeTimer.reset();
+        //} else if ((canRangeTimer.get() > CANRangeConstants.LONG_TIME) && needToUnjam == false) {
+          //  needToUnjam = true;
+          //  canRangeTimer.reset();
+       // } else if ((canRangeTimer.get() > CANRangeConstants.UNJAM_TIME) && needToUnjam == true) {
+         //   needToUnjam = false;
+          //  canRangeTimer.reset();
+        //}
+
+        //if (needToUnjam) {
+        //    agitator.setAgitatorSpeed(-wheelspeed);
+        //} else {
+
+        //}
+    //}
+        
         
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
@@ -107,6 +123,9 @@ public void execute() {
         /*if (oscillatingTimer.hasElapsed(1)){
             arm.oscillate();
         }*/
+        
+
+        
 
     }
 

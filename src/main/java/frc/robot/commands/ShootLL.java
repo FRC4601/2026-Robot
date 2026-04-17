@@ -15,28 +15,30 @@ public class ShootLL extends Command {
     private final Stager stager;    
     //private final CommandSwerveDrivetrain drivetrain;
     private final Vision vision;
+    private final Arm arm;
     private final CANRange canRange;
 
     private final double end;
     private final double wheelspeed; 
-    //private final Timer oscillatingTimer;
+    private final Timer oscillatingTimer;
     public final Timer shootTimer;
     public final Timer canRangeTimer;
     public boolean needToUnjam;
 
     public ShootLL(Agitator agitator, Shooter shooter, Stager stager, CommandSwerveDrivetrain drivetrain,
-                    Vision vision, CANRange canRange, double end, double wheelspeed) {
+                    Vision vision, Arm arm, CANRange canRange, double end, double wheelspeed) {
 
         this.agitator = agitator;
         this.shooter = shooter;
         this.stager = stager;
         //this.drivetrain = drivetrain;
         this.vision = vision;
+        this.arm = arm;
         this.canRange = canRange;
 
         this.end = end;
         this.wheelspeed = wheelspeed;
-        //this.oscillatingTimer = new Timer();
+        this.oscillatingTimer = new Timer();
         this.shootTimer = new Timer();
         this.canRangeTimer = new Timer();
         this.needToUnjam = false;
@@ -50,9 +52,9 @@ public class ShootLL extends Command {
 
         agitator.startTimer();
 
-        //arm.startOscillate();
-        //oscillatingTimer.reset();
-        //oscillatingTimer.start();
+        arm.startOscillate();
+        oscillatingTimer.reset();
+        oscillatingTimer.start();
         shootTimer.reset();
         shootTimer.start();
         canRangeTimer.reset();
@@ -70,6 +72,7 @@ public void execute() {
         double x = pose.getX();
         double y = pose.getY(); // Get the robot's current position on the field, which can be used for distance-based adjustments to shooting
         double rotation = pose.getRotation().getDegrees(); // Get the robot's current rotation in degrees relative to the field, can be used to aim turret*/
+        arm.stopArm();
 
         
         if (!vision.hasTarget()) {
@@ -95,34 +98,36 @@ public void execute() {
             stager.setStagerSpeed(0.65*wheelspeed);
         }*/
 
-        // this logic feels unnecessarily complex... but it works (i think)
+         //this logic feels unnecessarily complex... but it works (i think)
 
-        
-        //if (canRange.detectsFuel()) {
-           // needToUnjam = false;
-           // canRangeTimer.reset();
-        //} else if ((canRangeTimer.get() > CANRangeConstants.LONG_TIME) && needToUnjam == false) {
-          //  needToUnjam = true;
-          //  canRangeTimer.reset();
-       // } else if ((canRangeTimer.get() > CANRangeConstants.UNJAM_TIME) && needToUnjam == true) {
-         //   needToUnjam = false;
-          //  canRangeTimer.reset();
-        //}
+        /* 
+        if (canRange.detectsFuel()) {
+            needToUnjam = false;
+            canRangeTimer.reset();
+        } else if ((canRangeTimer.get() > CANRangeConstants.LONG_TIME) && needToUnjam == false) {
+            needToUnjam = true;
+           canRangeTimer.reset();
+        } else if ((canRangeTimer.get() > CANRangeConstants.UNJAM_TIME) && needToUnjam == true) {
+           needToUnjam = false;
+            canRangeTimer.reset();
+        }
 
-        //if (needToUnjam) {
-        //    agitator.setAgitatorSpeed(-wheelspeed);
-        //} else {
+        if (needToUnjam) {
+            agitator.setAgitatorSpeed(-wheelspeed);
+        } else {
 
-        //}
-    //}
+        }
+    }
+
+    */
         
         
         //agitator.feedPeriodic(); method to run agitator and unjam if necessary
 
         // moves arm back and forth to help with feeding
-        /*if (oscillatingTimer.hasElapsed(1)){
-            arm.oscillate();
-        }*/
+        if (oscillatingTimer.hasElapsed(3)){
+            //arm.oscillate();
+        }
         
 
         

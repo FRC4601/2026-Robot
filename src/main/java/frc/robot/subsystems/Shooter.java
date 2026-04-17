@@ -27,7 +27,7 @@ public class Shooter extends SubsystemBase {
   private VelocityVoltage velocityRequest;
 
    
-    
+  
 
   private static final TreeMap<Double, Double> DISTANCE_TO_RPM = new TreeMap<>();
 

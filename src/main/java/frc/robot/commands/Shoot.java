@@ -80,24 +80,27 @@ public class Shoot extends Command {
             arm.oscillate();
         }*/
 
-       // if (canRange.detectsFuel()) {
-           // needToUnjam = false;
-           // canRangeTimer.reset();
-           // canRangeTimer.start();
-       // } else if (needToUnjam == false && canRangeTimer.hasElapsed(CANRangeConstants.LONG_TIME)) {
-            //needToUnjam = true;
-           // canRangeTimer.reset();
-           // canRangeTimer.start();
-        //} else if (needToUnjam == true && canRangeTimer.hasElapsed(CANRangeConstants.UNJAM_TIME)) {
-          //  needToUnjam = false;
-          //  canRangeTimer.reset();
-          //  canRangeTimer.start();
-       // }
+         /* 
+        if (canRange.detectsFuel()) {
+            needToUnjam = false;
+            canRangeTimer.reset();
+        } else if ((canRangeTimer.get() > CANRangeConstants.LONG_TIME) && needToUnjam == false) {
+            needToUnjam = true;
+           canRangeTimer.reset();
+        } else if ((canRangeTimer.get() > CANRangeConstants.UNJAM_TIME) && needToUnjam == true) {
+           needToUnjam = false;
+            canRangeTimer.reset();
+        }
 
-       // if (needToUnjam) {
-        //    agitator.setAgitatorSpeed(-wheelspeed);
-        //    stager.stopStager();
-       // } else {
+        if (needToUnjam) {
+            agitator.setAgitatorSpeed(-wheelspeed);
+        } else {
+
+        }
+        }
+
+    */
+
             if (shootTimer.hasElapsed(0.5)) {
                 agitator.setAgitatorSpeed(wheelspeed);
                 stager.setStagerSpeed(0.65*wheelspeed);

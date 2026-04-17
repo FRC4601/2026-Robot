@@ -36,7 +36,9 @@ public class PositionArm extends Command {
     @Override
     public void execute() {
         arm.moveArmToPosition(targetPosition);
-        if (!armTimer.hasElapsed(1.0)) {
+        
+        
+        if (!armTimer.hasElapsed(1.0) && targetPosition < 70) {
             intake.runIntake(0.5);
         } else {
             intake.stopIntake();
@@ -47,6 +49,11 @@ public class PositionArm extends Command {
     public boolean isFinished() {
         return (armTimer.hasElapsed(end));
                     // || (Math.abs(arm.ArmPosition() - targetPosition) <= 1);
+    }
+
+    public void end(boolean interrupted) {
+        arm.stopArm();
+        intake.stopIntake();
     }
 
 }

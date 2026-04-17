@@ -66,34 +66,53 @@ public class RobotContainer {
     // Everything here is used for autos in the PathPlanner app
     // FIGURE OUT WHERE THE SHOOTING DEAD ZONES ARE!!
     public RobotContainer() {
-
+        
+        // I decided to make the side intakes two different commands
+        // cause the times are slightly different
+        
         NamedCommands.registerCommand("IntakeLeft", 
             Commands.sequence(
                 Commands.waitSeconds(1.1),
-                new PositionArm(arm, hopper, intake, 140, 1),
-                new IntakeCommand(intake, 2.3)
+                Commands.parallel(
+                    new PositionArm(arm, hopper, intake, 142,7.0),
+                    new IntakeCommand(intake, 7.0)
+                ),
+                new PositionArm(arm, hopper, intake, 42, 1.3)
             )
         );
 
         NamedCommands.registerCommand("IntakeRight",
             Commands.sequence(
                 Commands.waitSeconds(1.1),
-                new PositionArm(arm, hopper, intake, 140, 1),
-                new IntakeCommand(intake, 2.3) // maybe change the time?
+                Commands.parallel(
+                    new PositionArm(arm, hopper, intake, 142,8.6),
+                    new IntakeCommand(intake, 8.6)
+                ),
+                new PositionArm(arm, hopper, intake, 42, 1.1)
             )
         );
 
         NamedCommands.registerCommand("OutpostIntake",
             Commands.sequence(
-                new PositionArm(arm, hopper, intake, 140, 1),
+                new PositionArm(arm, hopper, intake, 142, 1),
                 new IntakeCommand(intake, 2.5)
+            )
+        );
+
+        NamedCommands.registerCommand("IntakeDepot", 
+            Commands.sequence(
+                Commands.parallel(
+                    new PositionArm(arm, hopper, intake, 142,3.0),
+                    new IntakeCommand(intake, 3.0)
+                ),
+                new PositionArm(arm, hopper, intake, 42, 1.4)
             )
         );
 
         NamedCommands.registerCommand("ShootBackIntake",
             Commands.sequence(
                 Commands.waitSeconds(2.1),
-                new PositionArm(arm, hopper, intake, 140, 1),
+                new PositionArm(arm, hopper, intake, 142, 1),
                 new IntakeCommand(intake, 1.5)
             )
         );
@@ -101,7 +120,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootButGood",
             Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 8, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 8, 1)
             )
         );
 
@@ -112,12 +131,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("ShootButGoodButGooder",
             Commands.sequence(
                 new AimLL(turret, shooter, vision, 1),
-                //new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
-                //new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1),
-                //new Unjam(agitator, 1.25),
-                new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 4.5, 1)
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 4, 1),
+                new Unjam(agitator, 0.5),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 4, 1),
+                new Unjam(agitator, 0.5),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 4, 1),
+                new Unjam(agitator, 0.5),
+                new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 4, 1),
+                new Unjam(agitator, 0.5)
             )
         );
 
@@ -126,7 +147,7 @@ public class RobotContainer {
         );
 
         NamedCommands.registerCommand("OpenHopper",
-            new PositionArm(arm, hopper, intake, 140, 1)
+            new PositionArm(arm, hopper, intake, 142, 1)
         );
 
         NamedCommands.registerCommand("CloseHopperALittle",
@@ -184,7 +205,6 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        joystick.rightBumper().whileTrue(new Shoot(agitator, shooter, stager, arm, canRange, 1250, 1, 999));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -198,11 +218,11 @@ public class RobotContainer {
         xboxController.x().whileTrue(new IntakeCommand(intake, 999));
 
         xboxController.rightTrigger(0.5).whileTrue(new AimLL(turret, shooter, vision, 100));
-        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter, stager, drivetrain, vision, canRange, 100, 1));
+        xboxController.leftTrigger(0.5).whileTrue(new ShootLL(agitator, shooter, stager, drivetrain, vision, arm, canRange, 100, 1));
         
         // potentially make a seperate auto/teleop command
         xboxController.leftBumper().onTrue(new PositionArm(arm, hopper, intake, 5, 999));
-        xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, intake, 140, 999));
+        xboxController.rightBumper().onTrue(new PositionArm(arm, hopper, intake, 142, 999));
 
         // D-pad controls (all do the same thing lol)
         xboxController.povRight().whileTrue(new Unjam(agitator, 999));

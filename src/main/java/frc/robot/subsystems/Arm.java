@@ -78,7 +78,17 @@ public class Arm extends SubsystemBase {
   public void moveArmToPosition(double targetPosition) {
     double currentPosition = ArmPosition();
     double output = armPIDController.calculate(currentPosition, targetPosition);
-    output = MathUtil.clamp(output, -0.25, 0.25); //limit to half power at most to prevent violent movements. Adjust as necessary.
+
+
+    if (currentPosition < 120 || output < 0){
+      // when moving the arm in an out, limit the power to prevent violent movements.
+      output = MathUtil.clamp(output, -0.25, 0.25);
+    }
+    else{
+      //when arm is extended to intake position, apply more power to hold position against incoming fuel
+      output = MathUtil.clamp(output, -1, 1);
+    }
+     
     
     // Prevent moving beyond the extended position
     if ((output > 0 && currentPosition >= ArmConstants.ARM_EXTENDED_POSITION) 
@@ -94,6 +104,7 @@ public class Arm extends SubsystemBase {
     armTimer.start();
     currentArmState = ArmState.POSITION_A; // start from a known position
   }
+  
 
 
   public void oscillate() {

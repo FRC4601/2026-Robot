@@ -50,7 +50,7 @@ public class Turret extends SubsystemBase {
   //Method to auto align the turret to be facing the april tag target. This will be used in the AimAndSetSpeed command.
   public void trackTarget(double tx) {
     double output = turretPIDController.calculate(tx, 0.0);
-    output = MathUtil.clamp(output, -0.3, 0.3);
+    output = MathUtil.clamp(output, -0.5, 0.5);
     rotate(-output);
   }
 
